@@ -1,0 +1,58 @@
+const fs = require('fs');
+
+
+var viewer = function(){
+    this.question=null; //Je sais pas si on peut mettre à nul avant
+}
+
+//On groupe des questions
+viewer.prototype.group = function(data){
+
+    fs.readFile(data.file, 'utf8', function (err,data) {
+        if (err) {
+            return logger.warn(err);
+        }
+
+        //Il faut trier le fichier écrit
+        const readline = require('readline').createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        readline.question('Quel nom d\'exerice voulez vous ?', nomExercice => {
+            console.log(`Vous avez choisi ce nom de question: ${nomExercice}!`);
+            readline.close();
+        });
+
+        this.rechercher(data, nomExercice);
+
+        //On stock dans question
+        this.question.push(trouvee);
+        console.log("La question a bien été trouvée, la voici");
+        console.log(this.tabQuestion);
+    })
+
+}
+
+//On crée une fonction qui va nous permettre de recherhce un nom de question
+viewer.prototype.rechercher=function (data, nomExercice) {
+    //On définit le séparateur
+    if(data[0]=="U"){   //Si le fichier commence par U1,U2, etc....
+        separator = ('::U');
+    }
+    else{   //Le fichier commence par EM
+        separator=('::EM')
+    }
+
+    //On sépare la question     .split(/,| /)
+    //--> le deuxième membre est le titre
+    data=data.split(separator);
+    //On filtre: on retire tout ce qui est le séparateur
+    data=data.filter((val, idx) => !val.match(separator));
+
+    var questionTrouvee = date[nomExercice];
+    return questionTrouvee;
+}
+
+module.exports = group;
+type: module;
