@@ -1,4 +1,5 @@
 const fs = require('fs');
+const VpfParser = require('./parser.js');
 
 
 var viewer = function(){
@@ -35,7 +36,15 @@ viewer.prototype.viewer = function(data){
 }
 
 //On crée une fonction qui va nous permettre de rechercher un nom de question
-viewer.prototype.rechercher=function (data, nomExercice) {
+viewer.prototype.rechercher=function (nomExercice) {
+
+
+
+    //Une fois qu'on a trouvé le fichier on le parse
+    var analyzer = new VpfParser();
+    analyzer.parse(data);   //il faut mettre en argument un fichier
+
+
     //On définit le séparateur
     if(data[0]=="U"){   //Si le fichier commence par U1,U2, etc....
         separator = ('::U');
