@@ -2,11 +2,11 @@ const fs = require('fs');
 
 
 var viewer = function(){
-    this.question=null; //Je sais pas si on peut mettre à nul avant
+    this.question=null; //Je sais pas si on peut mettre à null avant
 }
 
-//On groupe des questions
-viewer.prototype.group = function(data){
+//On sélectionne des questions
+viewer.prototype.viewer = function(data){
 
     fs.readFile(data.file, 'utf8', function (err,data) {
         if (err) {
@@ -34,7 +34,7 @@ viewer.prototype.group = function(data){
 
 }
 
-//On crée une fonction qui va nous permettre de recherhce un nom de question
+//On crée une fonction qui va nous permettre de rechercher un nom de question
 viewer.prototype.rechercher=function (data, nomExercice) {
     //On définit le séparateur
     if(data[0]=="U"){   //Si le fichier commence par U1,U2, etc....
@@ -44,15 +44,23 @@ viewer.prototype.rechercher=function (data, nomExercice) {
         separator=('::EM')
     }
 
-    //On sépare la question     .split(/,| /)
-    //--> le deuxième membre est le titre
-    data=data.split(separator);
-    //On filtre: on retire tout ce qui est le séparateur
-    data=data.filter((val, idx) => !val.match(separator));
+    for (let i = 0; i < 47; i++) {//on parcourt les 47 fichiers du sujet B
 
-    var questionTrouvee = date[nomExercice];
-    return questionTrouvee;
+        if (){  //On a trouvé la question, je sais pas quoi mettre dans la condition
+            //On sépare la question     .split(/,| /)
+            //--> le deuxième membre est le titre
+            data=data.split(separator);
+            //On filtre: on retire tout ce qui est le séparateur
+            data=data.filter((val, idx) => !val.match(separator));
+
+            var questionTrouvee = date[nomExercice];
+            return questionTrouvee;
+        }
+    }
+    return //Si on arrive à cette ligne c'est que le for n'a rien trouvé. Mais comment retourner une erreur sachant que le type de retour est une question
+
+
 }
 
-module.exports = group;
+module.exports = viewer();
 type: module;
