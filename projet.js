@@ -79,7 +79,6 @@ cli
 	
 
 	var path=myMap.get(numF);
-	console.log("hhhhhhhhhhhh"+path[14]);
 
 	fs.readFile(path, 'utf8', function (err,data) {
 		if (err) {
@@ -90,12 +89,12 @@ cli
 
 		//Il faut trier le fichier écrit
 
-		if(path[14]=="U"){
+		if(path[14]==="U"){
 			separator = ('::U');
 		}
-			else{//Le fichier commence par EM
+		else{//Le fichier commence par EM
 			separator=('::EM')
-			}
+		}
 		
 		//On split les datas
 		data=data.toString();
@@ -122,24 +121,16 @@ cli
 	.argument('<file>', 'The file to check with Vpf parser')
 	.action(({args, logger}) => {
 		
-		fs.readFile(args.file, 'utf8', function (err,data) {
+		//U1-p7-Adverbs
+		var path="./SujetB_data/U1-p7-Adverbs.gift"
+		fs.readFile(path, 'utf8', function (err,data) {
 			if (err) {
 				return logger.warn(err);
 			}
 	  
+			console.log("onest dans projet");
 			var analyzer = new VpfParser();
-			analyzer.parse(data);
-      //Maintenant le tableau de questions est dans l'objet VpfParser.parsedPOI
-      //Mainteant--> essayer de mettre le numéro de la question dans objet.num
-
-      //on créée un objet objet
-      var triQ=new question();
-
-      //On appelle une fonction dans le fichier parser.js avec en paramètre le parser.parsedPOI
-      var string=analyzer.parsedPOI[0];
-      triQ.tri(string);
-
-
+			analyzer.parse(data,path);
 		});
 			
 	})
