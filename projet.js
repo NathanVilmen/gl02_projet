@@ -130,39 +130,125 @@ cli
 
             console.log("on est dans projet");
             var analyzer = new VpfParser();
-            analyzer.parse(data,path);
+            analyzer.parse(data,path,1);
         });
 
     })
 
+    // Pour faire passer un test à un étudiant
+    // Il faut trier les questions et les réponses
+    .command('test', 'Fonction qui fait passer le test à un étudiant')
+    .argument('<file>', 'Le fichier de type examen')
+    .action(({args, logger}) => {
+
+        //U1-p7-Adverbs
+        var path="./SujetB_data/U1-p7-Adverbs.gift"
+        //C'est juste en test mais sinon faudrait mettre args.file dans le fs.Read
+        fs.readFile(path, 'utf8', function (err,data) {
+            if (err) {
+                return logger.warn(err);
+            }
+
+            console.log("on est dans test");
+            //On appelle le parser pour qu'il tri le fichier
+            var analyzer = new VpfParser();
+
+            //On appelle la fonction teste qui trie les réponses de chaque question
+            analyzer.test(data,path);
+
+            //On affiche l'énoncé et les questions en rapport avec l'énoncé
+            //On affiche ensuite les réponses possibles
+            //Puis on affiche un bilan de réponses
+        });
+
+    })
 
     //Spec 1
     .command('contact', 'Generate a contact vCard file')
     //pas d'argument
     .action((logger) => {
-        let N = prompt("Enter a last name (nom de famille) : ")
-        let FN = prompt("Enter a first name (prenom) : ")
-        let typeEmail = prompt("Before entering the email : Is it a home mail(type HOME) or a work mail(type WORK)? ")
-        let email = prompt("Enter the email : ")
-        let typeTel = prompt("Before entering the phone number : is it HOME, CELL or WORK? (type the word in uppercases) ")
-        let tel = prompt("Enter a phone number (without white spaces) ")
 
-        fs.appendFile(N+'_'+FN+'.vcf',
-            'BEGIN:VCARD\nVERSION:4.0\nN:' + N + ';' + FN + '\nFN:' + FN + ' ' + N + '\nEMAIL;' + typeEmail + ':' + email + '\nTEL;' + typeTel + ':' + tel + '\nEND:VCARD',
-            function (err) {
-                if (err) {
-                    return console.log(err);
-                    console.log('Erreur pour le fichier.');
+        function isNumber(n) {
+            return /^-?[\d.]+(?:e-?\d+)?$/.test(n);
+        }
+
+        function isString(o) {
+            return typeof o == "string" || (typeof o == "object" && o.constructor === String);
+        }
+
+
+        let N = prompt("Enter a last name (nom de famille) in lowercases : ");
+
+        //check d'erreur : si ce n'est pas un string, ou qu'il contient un ou plusieurs chiffres
+        while (!isString(N) || N.match(/\d+/g) !== null){
+            N = prompt("Wrong input. Enter a last name (nom de famille) in lowercases : ");
+        }
+
+        let FN = prompt("Enter a first name (prenom) in lowercases : ");
+
+        while (!isString(FN) || FN.match(/\d+/g) !== null){
+            FN = prompt("Wrong input. Enter a first name (prenom) in lowercases : ");
+        }
+
+        //on crée/append un autre fichier, qui contient la liste des noms de tous ceux qui ont
+        fs.appendFile('ListVCard.txt', '*',function (err) {
+            if (err) {
+                return console.log(err);
+                console.log('Erreur pour le fichier ListVCard.txt.');
+            }
+        })
+
+        //on check si le fichier existe déjà
+        fs.readFile('ListVCard.txt', 'utf8', function (err,data) {
+            if (err) {
+                return logger.warn(err);
+            }
+            if (data.includes(N+' '+FN)) {
+                console.log("Contact déjà existant.\n");
+            } else {
+
+                //on demande les infos
+                let typeEmail = prompt("Before entering the email : Is it a HOME mail or a WORK mail(type in uppercases)? ");
+                while (typeEmail !== 'HOME' && typeEmail !== 'WORK'){
+                    typeEmail = prompt("Wrong input. Is it a HOME mail or a WORK mail(type in uppercases)? ");
                 }
-            });
-    })
+                let email = prompt("Enter the email : ");
+                let typeTel = prompt("Before entering the phone number : is it HOME, CELL or WORK? (type the word in uppercases) ");
+                while (typeTel !== 'HOME' && typeTel !== 'WORK' && typeTel !== 'CELL'){
+                    typeTel = prompt("Wrong input. Is it a HOME mail or a WORK mail(type in uppercases)? ");
+                }
+                let tel = prompt("Enter a phone number (without white spaces) : ");
+                while (!isNumber(tel) || tel.length > 10) {
+                    tel = prompt("Wrong input. Enter a number with maximum 10 digits : ");
+                }
 
+                //on génère un nouveau fichier vCard
+                fs.appendFile(N + '_' + FN + '.vcf',
+                    'BEGIN:VCARD\nVERSION:4.0\nN:' + N + ';' + FN + '\nFN:' + FN + ' ' + N + '\nEMAIL;' + typeEmail + ':' + email + '\nTEL;' + typeTel + ':' + tel + '\nEND:VCARD',
+                    function (err) {
+                        if (err) {
+                            return console.log(err);
+                            console.log('Erreur pour le fichier (nom_prenom).vcf');
+                        }
+                    });
+
+                //On ajoute le nom au fichier ListVCard.txt
+                fs.appendFile('ListVCard.txt', N + ' ' + FN + '\n', function (err) {
+                    if (err) {
+                        return console.log(err);
+                        console.log('Erreur pour le fichier ListVCard.txt.');
+                    }
+                })
+            }
+        })
+    })
 
 
     //Exemple
     .command('coucou', 'Yeahozjhh')
     .argument("<name>", "Name to greet")
     .action(({ logger, args }) => {
-        logger.info("coucou tiri, %s!", args.name)
+        logger.info("coucou tiri, %s!", args.name);
+
     })
 cli.run(process.argv.slice(2));
