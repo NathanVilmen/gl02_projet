@@ -111,7 +111,7 @@ program
 				if (err) {
 					return logger.warn(err)
 				}
-				if(data.includes(typeExercice)){
+				if(data.toLowerCase().includes(typeExercice.toLowerCase())){	//toLowerCase() pour ne pas être sensible à la casse
 					//On affiche le fichier
 					console.log("----- FICHIER numéro " + i + " -----")
 					console.log(data)
