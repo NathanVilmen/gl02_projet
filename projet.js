@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const prompt = require('prompt-sync')();
-const VpfParser = require('./parser.js');
-const groupp = require('./group.js');
+//const VpfParser = require('./parser.js');
+//const groupp = require('./group.js');
 
 const cli = require("@caporal/core").default;
-const question = require('./objet.js');
+//const question = require('./objet.js');
 //const { group, Console } = require('console');
 
 //Faire un objet question avec numéro de question, type de question,question, titre, forme de la question en fonction du type de celle-ci
@@ -128,7 +128,7 @@ cli
                 return logger.warn(err);
             }
 
-            console.log("onest dans projet");
+            console.log("on est dans projet");
             var analyzer = new VpfParser();
             analyzer.parse(data,path);
         });
@@ -137,7 +137,25 @@ cli
 
 
     //Spec 1
+    .command('contact', 'Generate a contact vCard file')
+    //pas d'argument
+    .action((logger) => {
+        let N = prompt("Enter a last name (nom de famille) : ")
+        let FN = prompt("Enter a first name (prenom) : ")
+        let typeEmail = prompt("Before entering the email : Is it a home mail(type HOME) or a work mail(type WORK)? ")
+        let email = prompt("Enter the email : ")
+        let typeTel = prompt("Before entering the phone number : is it HOME, CELL or WORK? (type the word in uppercases) ")
+        let tel = prompt("Enter a phone number (without white spaces) ")
 
+        fs.appendFile(N+'_'+FN+'.vcf',
+            'BEGIN:VCARD\nVERSION:4.0\nN:' + N + ';' + FN + '\nFN:' + FN + ' ' + N + '\nEMAIL;' + typeEmail + ':' + email + '\nTEL;' + typeTel + ':' + tel + '\nEND:VCARD',
+            function (err) {
+                if (err) {
+                    return console.log(err);
+                    console.log('Erreur pour le fichier.');
+                }
+            });
+    })
 
 
 
