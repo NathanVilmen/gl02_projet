@@ -190,52 +190,65 @@ program
 		let question;
 		let i=1;	//permet de compter le nombre de fois qu'on exécute le while
 		fs.readFile(path.toString(), 'utf8', function (err,data) {
-			if (err) {
+			/*if (err) {
 				return logger.warn(err)
-			}
+			}*/
 			if(path[14]==="U"){
 				separator = ('::U');
 			}
 			else{//Le fichier commence par EM
 				separator=('::EM')
 			}
-			while(trouve === false){	//Dès qu'on trouve 2 questions on s'arrête de chercher
-				//On prend le nom de la question et on regarde combien de fois elle apparait. Si c'est une fois c'est bon, si plus non
-				//Le nom de la question sera tout ce qu'il y a entre :: et ::
-				//Mettre le parseur pour récupérer la question
-				// question =
-				for (let j = 1; j <=i; j++) {	//Quand on est au premier passage du while on lit la première question, au deuxième passage la 2 etc
-					//on lit la question
-					//question = --> mettre le résultat du parser. Mais si j'appelle le parser 2 fois est ce que me retourne la question 2 ?!?
-				}
-				/*Normalement ça devrait être résolu avec le for du dessus
-				if (i === 1){
-					//on lit la première question
-				}
-				else if (i === 2){
-					//on lit la deuxième question
-				}*/
 
-				if(data.includes(question)){
-					compteur++;
+			//Ca marche, https://www.it-swarm-fr.com/fr/javascript/lire-un-fichier-ligne-par-ligne-dans-node.js/972842073/
+			/*var lineReader = require('readline').createInterface({	//On définie une nouvelle constante pour lire
+				input: require('fs').createReadStream(path.toString()) //path.toString()});
+			});
+
+			lineReader.on('line', function (line){
+				console.log('Line from file:', line);
+			})*/
+
+			//Idée à faire : split le fichier dans un tableau
+			//Tester tab[i] = line
+			//On teste dans une lecture d'une ligne où on incrémente le compteur et "trouve" et si matche
+			let tabLine;
+			let tabCompteur;
+			tabLine = data.toString().split(separator);
+
+			/*console.log("\ntab[0] = " + tabLine[0]);
+			console.log("tab[1] = " + tabLine[2]);
+			console.log("tab[2] = " + tabLine[1]);
+			console.log("La taille du tableau est de " + tabLine.length)*/
+
+			//console.log("----- Le tableau est -----");
+			//console.log(tabLine);
+
+			for (let j = 0; j < tabLine.length; j++) {
+				compteur=0;
+				for (let k = 0; k < tabLine.length; k++) {
+					if(tabLine[k] === tabLine[j]){
+						//console.log("compteur" + j + " ++");
+						compteur++;
+						//console.log("compteur = " + compteur);
+					}
+					if(compteur >= 2){
+						trouve = true;
+						//console.log("trouve " + j + " " + trouve);
+						tabCompteur = compteur;
+					}
 				}
-				if (compteur === 2){
-					trouve = true;
-				}
-				i++;
 			}
 
 			//On communique les résultats
 			if(trouve ===true){
-				console.log("Nous avons trouvé au moins 2 fois la même question");
-				console.log("Le fichier n'est donc pas valide");
+				console.log("\nNous avons trouvé " + tabCompteur + " fois la même question");
+				console.log("\nLe fichier n'est donc pas valide");
 			}
 			else{
-				console.log("Le fichier est valide, chaque question n'est présente qu'une seule fois");
+				console.log("\nLe fichier est valide, chaque question n'est présente qu'une seule fois");
 			}
-
 		})
-
 	})
 
 	//Exemple
