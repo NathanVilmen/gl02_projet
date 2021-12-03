@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const prompt = require('prompt-sync')();
-//const VpfParser = require('./parser.js');
-//const groupp = require('./group.js');
+const VpfParser = require('./parser.js');
+const groupp = require('./group.js');
 
 const cli = require("@caporal/core").default;
-//const question = require('./objet.js');
+const question = require('./objet.js');
 //const { group, Console } = require('console');
 
 //Faire un objet question avec numéro de question, type de question,question, titre, forme de la question en fonction du type de celle-ci
