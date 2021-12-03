@@ -128,22 +128,47 @@ cli
 				return logger.warn(err);
 			}
 	  
-			console.log("onest dans projet");
+			console.log("on est dans projet");
 			var analyzer = new VpfParser();
-			analyzer.parse(data,path);
+			analyzer.parse(data,path,1);
 		});
 			
 	})
 
+	// Pour faire passer un test à un étudiant
+	// Il faut trier les questions et les réponses 
+	.command('test', 'Fonction qui fait passer le test à un étudiant')
+	.argument('<file>', 'Le fichier de type examen')
+	.action(({args, logger}) => {
+		
+		//U1-p7-Adverbs
+		var path="./SujetB_data/U1-p7-Adverbs.gift"
+		//C'est juste en test mais sinon faudrait mettre args.file dans le fs.Read
+		fs.readFile(path, 'utf8', function (err,data) {
+			if (err) {
+				return logger.warn(err);
+			}
+	  
+			console.log("on est dans test");
+			//On appelle le parser pour qu'il tri le fichier 
+			var analyzer = new VpfParser();
 
+			//On appelle la fonction teste qui trie les réponses de chaque question
+			analyzer.test(data,path);
 
-
+			//On affiche l'énoncé et les questions en rapport avec l'énoncé 
+			//On affiche ensuite les réponses possibles
+			//Puis on affiche un bilan de réponses
+		});
+			
+	})
 
 
   //Exemple
   .command('coucou', 'Yeahozjhh')
   .argument("<name>", "Name to greet")
   .action(({ logger, args }) => {
-    logger.info("coucou tiri, %s!", args.name)
+    logger.info("coucou tiri, %s!", args.name);
+
   })
 cli.run(process.argv.slice(2));
