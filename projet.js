@@ -149,7 +149,7 @@ cli
                 return logger.warn(err);
             }
 
-            console.log("on est dans test");
+            console.log("onest dans test");
             //On appelle le parser pour qu'il tri le fichier
             var analyzer = new VpfParser();
 
