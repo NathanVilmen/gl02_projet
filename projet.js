@@ -351,6 +351,7 @@ program
 
 			let analyzerExam = new VpfParser();
 			analyzerExam.parse(dataExam, pathExam);
+			let nbErreurs=0;
 
 			console.log("----- Vous allez passer un examen composé de " + analyzerExam.enonce.length + " exercices -----");
 			let pathReponses = prompt("Quel nom voulez vous donner au fichier contenant vos réponses au test ?");
@@ -366,20 +367,24 @@ program
 			}
 
 			console.log("----- Vérification du test -----");
-			let analyzer = new VpfParser();
-			analyzer.test(dataExam, pathExam, pathReponses);
-			let nbErreurs=0;
+			fs.readFile(pathExam, 'utf8', function (err,dataExam){
+				dataExam=dataExam.split('\n');
 
-			for (let i = 0; i < analyzerExam.enonce.length; i++) {
-				console.log("\n-- Résultat exercice " + i + " --");
-				if(analyzer.filTest[i][1].localeCompare(analyzer.filTest[i][2]) === 0){
-					console.log("Vous avez la bonne réponse !");
+				console.log("Vos réponses sont : " + dataExam);
+				let analyzer = new VpfParser();
+				analyzer.test(dataExam, pathExam, pathReponses);
+
+				for (let i = 0; i < analyzerExam.enonce.length; i++) {
+					console.log("\n-- Résultat exercice " + i + " --");
+					if(analyzer.filTest[i][1].localeCompare(analyzer.filTest[i][2]) === 0){
+						console.log("Vous avez la bonne réponse !");
+					}
+					else{
+						console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzer.filTest[i][1]);
+						nbErreurs++;
+					}
 				}
-				else{
-					console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzer.filTest[i][1]);
-					nbErreurs++;
-				}
-			}
+			})
 
 			console.log("Au final, sur " + analyzerExam.enonce.length + " exercices, vous avez fait " + nbErreurs + " erreurs");
 

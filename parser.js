@@ -1,3 +1,4 @@
+const fs = require("fs");
 var VpfParser = function(){
     // The list of POI parsed from the input file.
     this.question = new Array();
@@ -88,13 +89,13 @@ VpfParser.prototype.test = function(dataExam, pathExam, pathReponses){
     console.log("###################");
 }
 
-VpfParser.prototype.triAffichage = function(dataExam, pathExam, pathReponses){
+VpfParser.prototype.triAffichage = function(dataExam, pathExam, dataReponses, pathReponses){
 
     console.log("on est dans triAffichage");
 
     var separator;
     //On cherche le nombre de questions du fichier
-    if(data.includes("::U")){
+    if(dataExam.includes("::U")){
         separator = ('::U');
     }
     else{
@@ -102,9 +103,9 @@ VpfParser.prototype.triAffichage = function(dataExam, pathExam, pathReponses){
     }
 
     //On sépare tous les blocs
-    data=data.split(separator);
-    for(let i=0;i<data.length;i++){
-        if(data[i].includes("{")){//C'est une question
+    dataExam=dataExam.split(separator);
+    for(let i=0;i<dataExam.length;i++){
+        if(dataExam[i].includes("{")){//C'est une question
             //On initialise le tableau à 2 dimensions à la bonne dimmension
             //Il sera de taille 4:
             //0:Enoncé ou question
@@ -115,10 +116,14 @@ VpfParser.prototype.triAffichage = function(dataExam, pathExam, pathReponses){
         }
     }
 
+    //On sépare les réponses de l'utilisateur
+    dataReponses = dataReponses.split('\n');
+
     for(let i=0;i<this.filTest.length;i++){
-        this.filTest[i][0]=this.EnonceQuestion(data,i);
-        this.filTest[i][1]=this.Reponses(data,i);
-        this.filTest[i][2]=this.ReponsesCorectes(data,i);
+        this.filTest[i][0]=this.EnonceQuestion(dataExam,i);
+        this.filTest[i][1]=this.Reponses(dataExam,i);
+        this.filTest[i][2]=dataReponses[i];
+        //this.filTest[i][2]=this.ReponsesUtilisateur(dataReponses,i);  Inutile en fait
         this.filTest[i][3]=this.TypeQuestion(data,i);
     }
 
@@ -144,51 +149,102 @@ VpfParser.prototype.EnonceQuestion = function(data,numero){
             var re = /(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)/gi;
             EnonceParsed=EnonceParsed.replace(re,'');
         }
-
+        return re;
     }
-    else{
+    /*else{
         //On parse la question
         data[0][0];
-    }
+    }*/
 
 }
 
 VpfParser.prototype.Reponses = function (data, numero) {
     console.log("On est dans Reponses()");
-    let reponse = '';
-    separator = '::EM'
-    data[numero]=data[numero].split(separator);
-    //console.log("data split : " + data);
+    let nbReponses = 0;
+    let reponse;
+    /*let separator;
+    if(data.includes("::U")){
+        separator = ('::U');
+    }
+    else{
+        separator = ('::E');
+    }
+
+    data=data.split(separator);
+    console.log("data split : " + data);*/
     data[numero]=data[numero].toString();
     //console.log("data toString() " + data);
     //La réponse se situe après le =
     //S'il la réponse est de ne rien mettre, exemple pour a/the/an/-, il faut que l'utilisateur rentre -
     //On récupère tout ce qu'il y a à partir du = jusqu'à ~ ou }
 
-    //Premièrement on récupère l'index du premier { pour savoir où sont les réponses
-    let indexReponses = data[numero].indexOf('=');
-    //console.log("indexReponses = " + indexReponses);
-    let caractereLu = data[numero].charAt(indexReponses+1);
-    do{
-        indexReponses++;
-        caractereLu = data[numero].charAt(indexReponses);
-        //console.log("Le caractère lu est : " + caractereLu);
-        //console.log("tilde : " + caractereLu.localeCompare('~'));
-        //console.log("accolade " + caractereLu.localeCompare('{'));
-        if(caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0) {
-            //reponse.append(caractereLu);
-            reponse = reponse + caractereLu;
-        }
-        //console.log("La réponse est maintenant : " + reponse)
-    }while(caractereLu.localeCompare('~') !== 0  && caractereLu.localeCompare('}') !== 0);
+    //Premièrement on veut savoir combien de réponses il y a dans le fichier
+    const symboleReponse = /=/g;
+    nbReponses = data[numero].match(symboleReponse);
+    console.log("Il y a " + nbReponses.length + " réponses");
 
-    console.log("La réponse de la question est : " + reponse);
+    let indexReponses;
+    let caractereLu;
+
+    if(nbReponses.length === 1 ) {
+        reponse = '';
+        //Premièrement on récupère l'index du premier { pour savoir où sont les réponses
+        indexReponses = data[numero].indexOf('=');
+        //console.log("indexReponses = " + indexReponses);
+        caractereLu = data[numero].charAt(indexReponses+1);
+        do{
+            indexReponses++;
+            console.log(indexReponses);
+            caractereLu = data[numero].charAt(indexReponses);
+            //console.log("Le caractère lu est : " + caractereLu);
+            //console.log("tilde : " + caractereLu.localeCompare('~'));
+            //console.log("accolade " + caractereLu.localeCompare('{'));
+            if(caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0) {
+                //reponse.append(caractereLu);
+                reponse = reponse + caractereLu;
+            }
+            //console.log("La réponse est maintenant : " + reponse)
+        }while(caractereLu.localeCompare('~') !== 0  && caractereLu.localeCompare('}') !== 0);
+    }
+    else {
+        reponse = new Array(nbReponses.length);
+        for (let i = 0; i < nbReponses.length; i++) {
+            reponse[i]='';
+            //Premièrement on récupère l'index du premier { pour savoir où sont les réponses
+            if (i === 0) indexReponses = data[numero].indexOf('=');
+            else indexReponses = data[numero].indexOf('=', indexReponses);
+            //console.log("indexReponses = " + indexReponses);
+            caractereLu = data[numero].charAt(indexReponses + 1);
+            do {
+                indexReponses++;
+                caractereLu = data[numero].charAt(indexReponses);
+                //console.log("Le caractère lu est : " + caractereLu);
+                //console.log("tilde : " + caractereLu.localeCompare('~'));
+                //console.log("accolade " + caractereLu.localeCompare('{'));
+
+                if (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0) {
+                    //reponse.append(caractereLu);
+                    reponse[i] = reponse[i] + caractereLu;
+                }
+                //console.log("La réponse est maintenant : " + reponse[i])
+            } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0);
+        }
+    }
+
+
+    if(nbReponses.length === 1) console.log("La réponse de la question est : " + reponse);
+    else console.log("Les réponses possibles à la question sont : " + reponse);
+    //return reponse;
 
     //Il faut traiter le numéro de la question
     //Askip ça marche pas pour un type de données
     //Il faut enregistrer les réponses dans filTest avec un return
 }
 
+/*VpfParser.prototype.ReponsesUtilisateur = function (dataReponse, numero) {
+    console.log("On est dans ReponsesUtilisateur()");
+    return dataReponse[numero];
+}*/
 
 module.exports = VpfParser;
 
