@@ -108,12 +108,20 @@ cli
 		
 		//on écrit l'énoncé et la question qui lui correspond
 		//Si l'énoncé est égale à zéro--> il n'y a pas d'énoncé à cette question donc on affiche pas l'énoncé
-		if(numEnonce){
-			analyzer.enonce[marqueur]='';
+		if(numEnonce===0){
+			fs.appendFile(pathNewFile, typeFichier+analyzer.question[numEnonce][numQ], function (err) {
+				if (err) return console.log(err);
+			});	
 		}
-		fs.appendFile(pathNewFile, typeFichier+analyzer.enonce[numEnonce]+analyzer.question[numEnonce][numQ], function (err) {
-			if (err) return console.log(err);
-		});	
+		else{
+			fs.appendFile(pathNewFile, typeFichier+analyzer.enonce[numEnonce], function (err) {
+				if (err) return console.log(err);
+			});	
+			fs.appendFile(pathNewFile, typeFichier+analyzer.question[numEnonce][numQ], function (err) {
+				if (err) return console.log(err);
+			});	
+		}
+		
 	})
 		
 	})
