@@ -7,6 +7,7 @@ const VpfParser = require('./parser.js');
 const { program } = require("@caporal/core");
 //const question = require('./objet.js');
 const { group } = require('console');
+const path = require("path");
 //const { logger } = require("logger/index");
 
 //Faire un objet question avec numéro de question, type de question,question, titre, forme de la question en fonction du type de celle-ci
@@ -334,7 +335,61 @@ program
 		})
 	})
 
-	//Tests réponses
+	// Pour faire passer un test à un étudiant
+	// Il faut trier les questions et les réponses
+	.command('test', 'Fonction qui fait passer le test à un étudiant')
+	.argument('<fileExam>', 'Le fichier de type examen')
+	.action(({args, logger}) => {
+
+		//U1-p7-Adverbs
+		let pathExam = args.fileExam.toString();
+		//C'est juste en test mais sinon faudrait mettre args.file dans le fs.Read
+		fs.readFile(pathExam, 'utf8', function (err,dataExam) {
+			if (err) {
+				return logger.warn(err);
+			}
+
+			let analyzerExam = new VpfParser();
+			analyzerExam.parse(dataExam, pathExam);
+
+			console.log("----- Vous allez passer un examen composé de " + analyzerExam.enonce.length + " exercices -----");
+			let pathReponses = prompt("Quel nom voulez vous donner au fichier contenant vos réponses au test ?");
+			pathReponses = pathReponses+'.gift';	//On génère un fichier en .gift mais ici ça n'a pas d'importance, un fichier .txt aurait marché
+
+			for (let i = 0; i < analyzerExam.enonce.length; i++) {
+				console.log("\n-- Exercice " + i + " --");
+				console.log(analyzerExam.question[i]);
+				let reponse = prompt("Veuillez rentrer votre réponse, si vous ne voulez rien mettre tapez un \"-\" ");
+				fs.appendFile(pathReponses, reponse, function (err) {
+					if (err) return console.log(err);
+				});
+			}
+
+			console.log("----- Vérification du test -----");
+			let analyzer = new VpfParser();
+			analyzer.test(dataExam, pathExam, pathReponses);
+			let nbErreurs=0;
+
+			for (let i = 0; i < analyzerExam.enonce.length; i++) {
+				console.log("\n-- Résultat exercice " + i + " --");
+				if(analyzer.filTest[i][1].localeCompare(analyzer.filTest[i][2]) === 0){
+					console.log("Vous avez la bonne réponse !");
+				}
+				else{
+					console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzer.filTest[i][1]);
+					nbErreurs++;
+				}
+			}
+
+			console.log("Au final, sur " + analyzerExam.enonce.length + " exercices, vous avez fait " + nbErreurs + " erreurs");
+
+				//On affiche l'énoncé et les questions en rapport avec l'énoncé
+				//On affiche ensuite les réponses possibles
+				//Puis on affiche un bilan de réponses
+			})
+		})
+
+	//Tests Réponses() du parser
 	.command('reponse', 'afficher la réponses')
 	.argument("<file>", "Path du fichier")
 	.action(({logger, args}) => {
