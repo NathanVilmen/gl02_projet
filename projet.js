@@ -4,6 +4,9 @@ const prompt = require('prompt-sync')();
 const VpfParser = require('./parser.js');
 const groupp = require('./group.js');
 
+const vg = require('vega');
+const vegalite = require('vega-lite');
+
 const cli = require("@caporal/core").default;
 const question = require('./objet.js');
 //const { group, Console } = require('console');
@@ -164,7 +167,7 @@ cli
     })
 
     //Spec 1
-    .command('contact', 'Generate a contact vCard file')
+    .command('contact', "Générer un fichier d'identification vCard")
     //pas d'argument
     .action((logger) => {
 
@@ -241,6 +244,83 @@ cli
                 })
             }
         })
+    })
+
+
+    //Spec 7
+    .command("profil", "Dresser le profil d'un fichier GIFT, et l'afficher sous forme d'un histogramme")
+    .alias("profil")
+    //.argument('<file>', 'Le fichier GIFT à étudier')
+    .action(({/*args, options,*/ logger}) => {
+        /*fs.readFile(args.file, 'utf8', function (err,data) {
+            if (err) {
+                return logger.warn(err);
+            }
+        */
+            //utilisation du parser sur la donnée
+            /*let analyzer = new VpfParser();
+            analyzer.parse(data);*/
+
+            //stockage du retour de la donnée parsée, sous forme d'un tableau à 2 dimensions
+
+
+            //extraction de la dimension du tableau qui nous intéresse, en la stockant dans un nouveau tableau list
+            let list=[1,2,1,1,1,3,4,5,1];
+            if(/*analyzer.errorCount*/0 === 0){ //l'attibut errorCount sera à creer dans le parser
+
+                //On initialise le compte des différents types à 0.
+                let i = 0;
+                let nbQCM = 0;
+                let nbVF = 0;
+                let nbCORR = 0;
+                let nbMM = 0;
+                let nbNUM = 0;
+                let nbOUV = 0;
+
+                for (i = 0 ; i < 9 /*list.length()*/ ; i++){
+                    switch (list[i]) {
+                        case 1 : nbQCM++; break;
+                        case 2 : nbVF++ ; break;
+                        case 3 : nbCORR++ ; break;
+                        case 4 : nbMM++ ; break;
+                        case 5 : nbNUM++ ; break;
+                        case 6 : nbOUV++ ; break;
+                        default : console.log("Type de question non valide.\n") ; break;
+                    }
+                }
+
+                var profile = {
+                    "data" : {
+                        "values" : [{"Type" : "QCM","Nombre" : nbQCM}, {"Type" : "Vrai-Faux","Nombre" : nbVF}, {"Type" : "Correspondance","Nombre" : nbCORR}, {"Type" : "Mot manquant","Nombre" : nbMM}, {"Type" : "Numérique","Nombre" : nbNUM}, {"Type" : "Ouverte","Nombre" : nbOUV}
+                        ]
+                    },
+                    "mark" : "bar",
+                    "encoding" : {
+                        "x" : {"field" : "Type", "type" : "nominal"},
+                        "y" : {"aggregate" : "average", "field" : "Nombre", "type" : "quantitative",
+                            "axis" : {"title" : "Nombre d'occurrence"}}
+                    }
+                }
+
+
+
+                const myProfile = vegalite.compile(profile).spec;
+
+                /* SVG version */
+                var runtime = vg.parse(myProfile);
+                var view = new vg.View(runtime).renderer('svg').run();
+                var mySvg = view.toSVG();
+                mySvg.then(function(res){
+                    fs.writeFileSync("./Profile.svg", res)
+                    view.finalize();
+                    logger.info("Profil savegardé dans : ./Profile.svg");
+                });
+
+            }else{
+                logger.info("The .vpf file contains error".red);
+            }
+
+        //});
     })
 
 
