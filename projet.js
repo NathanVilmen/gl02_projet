@@ -95,11 +95,23 @@ cli
 		var analyzer=new VpfParser();
 		analyzer.parse(data)
 
+		//On repère le type du fichier
+		var typeFichier;
+		if(path.includes('EM-')){
+			typeFichier='::EM';
+		}
+		else{
+			ypeFichier='::U';
+		}
 
 		console.log("Voici la question:"+analyzer.question[numEnonce][numQ]);
 		
 		//on écrit l'énoncé et la question qui lui correspond
-		fs.appendFile(pathNewFile, '::U'+analyzer.enonce[numEnonce]+analyzer.question[numEnonce][numQ], function (err) {
+		//Si l'énoncé est égale à zéro--> il n'y a pas d'énoncé à cette question donc on affiche pas l'énoncé
+		if(numEnonce){
+			analyzer.enonce[marqueur]='';
+		}
+		fs.appendFile(pathNewFile, typeFichier+analyzer.enonce[numEnonce]+analyzer.question[numEnonce][numQ], function (err) {
 			if (err) return console.log(err);
 		});	
 	})
@@ -109,7 +121,7 @@ cli
 
 	// Pour faire passer un test à un étudiant
 	// Il faut trier les questions et les réponses 
-	.command('test', 'Fonction qui fait passer le test à un étudiant')
+	.command('test', 'truc pour tester des trucs')
 	.argument('<file>', 'Le fichier de type examen')
 	.action(({args, logger}) => {
 		
@@ -120,20 +132,7 @@ cli
 			if (err) {
 				return logger.warn(err);
 			}
-	  
-			console.log("on est dans test");
-			//On appelle le parser pour qu'il tri le fichier 
-			//function x(a,b,c){}
-			//new x(1,2,3);
 			
-			var analyzer=new VpfParser();
-
-			//On appelle la fonction teste qui trie les réponses de chaque question
-			analyzer.test(data,path);
-
-			//On affiche l'énoncé et les questions en rapport avec l'énoncé 
-			//On affiche ensuite les réponses possibles
-			//Puis on affiche un bilan de réponses
 		});
 			
 	})
@@ -265,7 +264,7 @@ cli
 			//On compte le nombre de questions
 			for(let i=0;i<analyzer.enonce.length;i++){
 
-				for(let y=0;y<analyzer[i].length;y++){
+				for(let y=0;y<analyzer.question[i].length;y++){
 
 					count++;
 					console.log("Le nombre de questions est:"+count);

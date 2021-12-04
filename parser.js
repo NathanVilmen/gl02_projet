@@ -1,16 +1,13 @@
-var VpfParser = function(){
+
+function VpfParser(){
 	// The list of POI parsed from the input file.
 	this.question = new Array();
     this.enonce=new Array();
-
     this.filTest=new Array();
-    this.questionAffichage=[];
-    this.enonceAffichage=[];
-    this.reponseAffichage=[];
 }
 
 //On spépare les questions et énoncés du fichier
-VpfParser.prototype.separer = function(data,path,valeur){
+VpfParser.prototype.separer = function(data){
 
     console.log("On est dans separer");
     console.log(path);
@@ -27,9 +24,24 @@ VpfParser.prototype.separer = function(data,path,valeur){
 	data = data.split(separator);
 	data = data.filter((val,idx) => !val.match(separator)); 
 
+    //On supprime le premier élément car ce n'est ni un énoncé s'il contient le mot Unit (c'est ni un énoncé ni une uestion)
+    if(data[0].includes("Unit")){
+        data.shift();
+    }
+
     //Créer le tableau de questions (ça comprends toute la question avec titre et tt)+ tab énoncés
     let tabQuestions=new Array();
     let tabEnonce=new Array();
+    
+    //Faut associer toutes les questions à chaque énoncé s'il y en un
+    var marqueur=0;
+
+    //On compte le nombre d'énoncé pour déterminer la taille de la première dimenision des tableaux
+    for(let i=0;i<data.length;i++){
+        if(!data[i].includes("{")){//C'est un énoncé
+            tabQuestions[i]=new Array();
+            tabEnonce[i]=new Array();
+    }
 
     //On ajoute à ce tableau les questions
     //On mets dans la première dimension et à chaque fois qu'il y a un énocé on change de dimension
@@ -37,12 +49,15 @@ VpfParser.prototype.separer = function(data,path,valeur){
         if(data[i].includes("{")){//C'est une question
 
             data[i]="U::"+data[i];
-            tabQuestions.push(data[i]);
+            tabQuestions[i][marqueur].push(data[i]);
             console.log("C'est une question:"+data[i]);      
         }
         else if(data[i].includes("::")){//C'est un énoncé, on enlève les "titres" des fichiers
+
+            //dès qu'il ya un énoncé, on incrémente marqueur pour changer de dimensions
+            marqueur++;
             data[i]="U::"+data[i];
-            tabEnonce.push(data[i]);
+            tabEnonce[i].push(data[i]);
             console.log("C'est un énoncé:"+data[i]);  
         }
         
@@ -52,20 +67,21 @@ VpfParser.prototype.separer = function(data,path,valeur){
     console.log("########################################");
     console.log("Voici le tableau d'énoncés':"+tabEnonce);
 
-    var retour=new Array();
-    retour[0]=tabEnonce;
-    retour[1]=tabQuestions;
-    return retour;
+    this.enonce=tabQuestions;
+    this.question=tabEnonce;
+
+    console.log("########################################");
+    console.log("Voici le tableau de questions dans l'objet:"+this.question);
+    console.log("########################################");
+    console.log("Voici le tableau d'énoncés dans l'objet:"+this.enonce);
 }
 
 // parse : analyze data by calling the first non terminal rule of the grammar
-VpfParser.prototype.parse = function(data,path){
+VpfParser.prototype.parse = function(data){
 
     console.log("on est dans parse");
-	retour = this.separer(data,path);
+	this.separer(data,path);
 
-	this.enonce=retour[0];
-    this.question=retour[1];
     console.log("###################");
     console.log("Voici le tableau de question dans l'objet"+this.question);
     console.log("Voici le tableau d'énoncé' dans l'objet"+this.enonce);
@@ -95,10 +111,10 @@ VpfParser.prototype.triAffichage = function(data,path){
     var separator;
     //On cherche le nombre de questions du fichier
     if(data.includes("U::")){
-        separator = ('::U');
+        separator = ('U::');
     }
     else{
-        separator = ('::E');
+        separator = ('E::');
     }
 
     //On sépare tous les blocs
@@ -128,31 +144,93 @@ VpfParser.prototype.triAffichage = function(data,path){
 VpfParser.prototype.EnonceQuestion = function(data,numero){
     console.log("on est dans EnonceQuestion");
     
-    //Test si c'est un énoncé
-    if(!data[numero].includes("{")){
-        //on parse cet énoncé 
-        var EnonceParsed;
-        EnonceParsed=data[numero];
-        //On enlève les éléments parasites
-        EnonceParsed=EnonceParsed.replace(/[:]/g,'');
-            if(EnonceParsed.includes("[html]")){
-                //Si c'est un énoncé de type html
-                var re = /(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)/gi;
-                EnonceParsed=EnonceParsed.replace(re,'');
-        }
-        else{
-            var re = /(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)/gi;
-                EnonceParsed=EnonceParsed.replace(re,'');
-        }
-       
+
+    //on parse cet énoncé 
+    var EnonceParsed;
+    EnonceParsed=data[numero];
+   //On enlève les éléments parasites
+    var re = /(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)|(\[marked\])|(<\/small>)|(<small>)/gi;
+
+    //Si c'est un énoncé
+    if(EnonceParsed.includes("{")){
+        EnonceParsed=EnonceParsed.replace(re,'');
     }
-    else{
-        //On parse la question
-        data[0][0];
+    else{//Si c'est une question --> on retire les réponses et on ajoute __ à la place
+        EnonceParsed=EnonceParsed.replace(re,'');
+        //Ca enlèvetoutes les réponses
+        EnonceParsed=EnonceParsed.replace(/{[\s\S]*}/,"_");
     }
     
+    return EnonceParsed;
 }
 
+VpfParser.prototype.EnonceQuestion = function(data,numero){
 
+    console.log("On est dans tri Type Question");
+    //Il y a choix multiples (1), vrai-faux (2),correspondance (3), mot manquant (4), numérique (5),question ouverte (6)
+    //Repères dans les {}
+    //Correspondance--> "->"
+    //VraiFaux-->'F'| 'TRUE'|'T'|'FALSE'
+    //Question ouvertes-->''
+    //Numériques--> 'digit..digit'|'digit:digit'|'=digit'
+    //Mot manquant--> une seule proposition de réponse {}=xxxx}
+    //Multiple choice--> les autres 
+
+    var EnonceParsed;
+    EnonceParsed=data[numero];
+
+    //On cherche ou se situe la première réponses
+    var separator=('{');
+    EnonceParsed=EnonceParsed.split(separator);
+    EnonceParsed=EnonceParsed[1];
+    EnonceParsed=EnonceParsed.toString();
+    EnonceParsed=EnonceParsed.split('}');
+    EnonceParsed=EnonceParsed[0];
+    EnonceParsed=EnonceParsed.toString();
+    console.log("Contenu de la première réponse:"+EnonceParsed);
+    console.log("Type de EnonceParsed "+typeof EnonceParsed);
+
+    //La variable qu'on renvoit
+    let correspondance;
+
+    //On a le contenu de la réponses
+    //Si il contient une flèche c'est un type "correspondance"--> on renvoie 3
+    if(EnonceParsed.includes("->")){
+        correspondance=3;
+        console.log("C'est une correspondance");
+    }
+    //Il reste que question libre -->on renvoie 6
+    else if(EnonceParsed.length===0){
+        correspondance=6;
+        console.log("C'est une question ouverte");
+    }
+    //S'il contient true ou false c'est un type vrai/faux --> on renvoie 2
+    //| 'TRUE'|'T'|'FALSE'
+    else if((EnonceParsed.includes('F') || EnonceParsed.includes('T') || EnonceParsed.includes('TRUE')) || (EnonceParsed.includes('FALSE')) && (!EnonceParsed.includes('='))){
+        correspondance=2;
+        console.log("C'est un vrai/faux");
+    }
+    //S'il contient qu'un "=" et pas de "~" il y a un choix donc c'est un mot manquant--> on renvoie 4
+    //EnonceParsed.match(/~/g).length!== 0 && 
+    else if(EnonceParsed.match(/~/g)!== null && !EnonceParsed.match(/~/g).length<1){
+        correspondance=4;
+        console.log("C'est un mot manquant");
+    }
+    //Il reste que MC--> on renvoie 1
+    //S'il contient plusieurs "~"  il y a plusieurs choix donc c'est un MC--> on renvoie 1
+    else if(EnonceParsed.match(/~/g)!== null && EnonceParsed.match(/~/g).length>1){
+        correspondance=1;
+        onsole.log("C'est un MC");
+    }
+    //Il reste que question libre -->on renvoie 6
+    //S'il contient 'digit..digit'|'digit:digit'|'=digit' c'est un type numérique --> on renvoie 5
+    //else if(EnonceParsed.includes('[0-9]..[0-9]'|'[0-9]:[0-9]'|'=[0-9]')){
+    else{
+        correspondance=5;
+        console.log("C'est un numérique");
+    }
+    console.log(correspondance);
+}
 module.exports = VpfParser;
 
+}
