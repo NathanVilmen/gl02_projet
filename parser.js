@@ -73,7 +73,7 @@ VpfParser.prototype.parse = function(data,path){
     console.log("Voici la question numéro 2"+this.question[1]);
 }
 
-VpfParser.prototype.test = function(dataExam, pathExam, dataReponses){
+VpfParser.prototype.test = function(question, pathExam, dataReponses){
 
     //On refait un parseur avec un élément de l'objet pasrer qui contient ce qu'on doit afficher dans l'ordre
     //Par exemple: retour[0]--> ça affiche enoncé ou question
@@ -84,84 +84,110 @@ VpfParser.prototype.test = function(dataExam, pathExam, dataReponses){
     //Pas besoin de définir le type pour cette fonction mais en vrai faut le faire pour les dernières specs donc go
     //Cas d'un simple énoncé: on mets tous les autres cases à zéro
     console.log("on est dans test");
-    var retour=new Array();
-    retour = this.triAffichage(dataExam,pathExam, dataReponses);
+    let retour=new Array();
+    retour = this.triAffichage(question,pathExam, dataReponses);
     console.log("###################");
 }
 
-VpfParser.prototype.triAffichage = function(dataExam, dataReponses, pathReponses){
+VpfParser.prototype.triAffichage = function(question, pathExam, dataReponses){
 
     console.log("on est dans triAffichage");
 
-    var separator;
+    /*var separator;
     //On cherche le nombre de questions du fichier
     if(dataExam.includes("::U")){
         separator = ('::U');
     }
     else{
         separator = ('::E');
-    }
+    }*/
+
+    console.log("question.length = " + question.length);
 
     //On sépare tous les blocs
-    dataExam=dataExam.split(separator);
-    for(let i=0;i<dataExam.length;i++){
+    //dataExam=dataExam.toString().split(separator);
+    //console.log("dataExam split : " + dataExam);
+    /*for(let i=0;i<dataExam.length;i++){
+        console.log("dataExam[" + i + "] = " + dataExam[i]);
         if(dataExam[i].includes("{")){//C'est une question
+            console.log("on passe dans le if");
             //On initialise le tableau à 2 dimensions à la bonne dimmension
             //Il sera de taille 4:
             //0:Enoncé ou question
             //1:Affichage de réponses si il y a
-            //2:Réponses correctes
-            //3:Type de la question
-            this.filTest[i]=new Array(4);
+            //2:Réponses de l'utilisateur
+            //3:Réponses correctes
+            //4:Type de la question
+            this.filTest[i]=new Array(5);
         }
-    }
+    }*/
+
+    this.filTest[0]= new Array(5);  //Pour mon test
+    //this.filTest[1]= new Array(5);  //Pour mon test
 
     //On sépare les réponses de l'utilisateur
-    dataReponses = dataReponses.toString().split('\n');
+    //dataReponses = dataReponses.toString().split('\n');
+    console.log("dataReponses[0] = " + dataReponses[0]);
+    //console.log("dataReponses[1] = " + dataReponses[1]);
+    /*//On supprime les cases du tableau dans lequel il y a ''
+    for (let i = 0; i < dataReponses.length; i++) {
+        if(dataReponses[i]===''){
+            console.log("On splice");
+            dataReponses.splice(i, 1);
+        }
+    }
+    console.log("data après le splice : " + dataReponses);*/
+
+    console.log("this.filTest.length = " + this.filTest.length);
 
     for(let i=0;i<this.filTest.length;i++){
-        this.filTest[i][0]=this.EnonceQuestion(dataExam,i);
-        this.filTest[i][1]=this.Reponses(dataExam,i);
+        //this.filTest[i][0]=this.EnonceQuestion(dataExam,i);
+        this.filTest[i][1]=this.Reponses(question,i);
         this.filTest[i][2]=dataReponses[i];
-        //this.filTest[i][2]=this.ReponsesUtilisateur(dataReponses,i);  Inutile en fait
-        this.filTest[i][3]=this.TypeQuestion(data,i);
+        //this.filTest[i][3]=this.reponsesCorrectes(question, i);
+        //this.filTest[i][4]=this.ReponsesUtilisateur(dataReponses,i);  Inutile en fait
+        //this.filTest[i][5]=this.TypeQuestion(data,i);
     }
 
     console.log("Le fichier est trié");
+    return this.filTest;
 }
 
 VpfParser.prototype.EnonceQuestion = function(data,numero){
     console.log("on est dans EnonceQuestion");
 
-    //Test si c'est un énoncé
-    if(!data[numero].includes("{")){
-        //on parse cet énoncé
-        var EnonceParsed;
-        EnonceParsed=data[numero];
-        //On enlève les éléments parasites
-        EnonceParsed=EnonceParsed.replace(/[:]/g,'');
-        if(EnonceParsed.includes("[html]")){
-            //Si c'est un énoncé de type html
-            var re = /(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)/gi;
-            EnonceParsed=EnonceParsed.replace(re,'');
-        }
-        else{
-            var re = /(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)/gi;
-            EnonceParsed=EnonceParsed.replace(re,'');
-        }
-        return re;
-    }
-    /*else{
-        //On parse la question
-        data[0][0];
-    }*/
 
+    //on parse cet énoncé
+    var EnonceParsed;
+    EnonceParsed=data[numero];
+    //On enlève les éléments parasites
+    var re = /(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)|(\[marked\])|(<\/small>)|(<small>)/gi;
+
+    //Si c'est un énoncé
+    if(EnonceParsed.includes("{")){
+        EnonceParsed=EnonceParsed.replace(re,'');
+    }
+    else{//Si c'est une question --> on retire les réponses et on ajoute __ à la place
+        EnonceParsed=EnonceParsed.replace(re,'');
+        //Ca enlèvetoutes les réponses
+        EnonceParsed=EnonceParsed.replace(/{[\s\S]*}/,"_");
+    }
+
+    console.log("EnonceParsed : " + EnonceParsed);
+
+    if (EnonceParsed === null){
+        return null;
+    }
+    else{
+        return EnonceParsed;
+    }
 }
 
-VpfParser.prototype.Reponses = function (data, numero) {
+VpfParser.prototype.Reponses = function (question, numero) {
     console.log("On est dans Reponses()");
     let nbReponses = 0;
     let reponse;
+    //numero = 1;
     /*let separator;
     if(data.includes("::U")){
         separator = ('::U');
@@ -172,7 +198,20 @@ VpfParser.prototype.Reponses = function (data, numero) {
 
     data=data.split(separator);
     console.log("data split : " + data);*/
-    data[numero]=data[numero].toString();
+
+    console.log("question = " + question);
+    //data[numero]=data[numero].toString();
+    console.log("question[" + numero + "] = " + question[numero]);
+
+    /*//On supprime les cases du tableau dans lequel il y a ''
+    for (let i = 0; i < data.length; i++) {
+        if(data[i]===''){
+            console.log("On splice");
+            data.splice(i, 1);
+        }
+    }
+    console.log("data après le splice : " + data);*/
+
     //console.log("data toString() " + data);
     //La réponse se situe après le =
     //S'il la réponse est de ne rien mettre, exemple pour a/the/an/-, il faut que l'utilisateur rentre -
@@ -180,28 +219,29 @@ VpfParser.prototype.Reponses = function (data, numero) {
 
     //Premièrement on veut savoir combien de réponses il y a dans le fichier
     const symboleReponse = /=/g;
-    nbReponses = data[numero].match(symboleReponse);
+    nbReponses = question[numero].match(symboleReponse);
     console.log("Il y a " + nbReponses.length + " réponses");
 
     let indexReponses;
     let caractereLu;
 
     if(nbReponses.length === 1 ) {
-        reponse = '';
+        reponse = new Array(1);
+        reponse[0] = '';
         //Premièrement on récupère l'index du premier { pour savoir où sont les réponses
-        indexReponses = data[numero].indexOf('=');
+        indexReponses = question[numero].indexOf('=');
         //console.log("indexReponses = " + indexReponses);
-        caractereLu = data[numero].charAt(indexReponses+1);
+        caractereLu = question[numero].charAt(indexReponses+1);
         do{
             indexReponses++;
-            console.log(indexReponses);
-            caractereLu = data[numero].charAt(indexReponses);
+            //console.log(indexReponses);
+            caractereLu = question[numero].charAt(indexReponses);
             //console.log("Le caractère lu est : " + caractereLu);
             //console.log("tilde : " + caractereLu.localeCompare('~'));
             //console.log("accolade " + caractereLu.localeCompare('{'));
             if(caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0) {
                 //reponse.append(caractereLu);
-                reponse = reponse + caractereLu;
+                reponse[0] = reponse[0] + caractereLu;
             }
             //console.log("La réponse est maintenant : " + reponse)
         }while(caractereLu.localeCompare('~') !== 0  && caractereLu.localeCompare('}') !== 0);
@@ -211,13 +251,13 @@ VpfParser.prototype.Reponses = function (data, numero) {
         for (let i = 0; i < nbReponses.length; i++) {
             reponse[i]='';
             //Premièrement on récupère l'index du premier { pour savoir où sont les réponses
-            if (i === 0) indexReponses = data[numero].indexOf('=');
-            else indexReponses = data[numero].indexOf('=', indexReponses);
+            if (i === 0) indexReponses = question[numero].indexOf('=');
+            else indexReponses = question[numero].indexOf('=', indexReponses);
             //console.log("indexReponses = " + indexReponses);
-            caractereLu = data[numero].charAt(indexReponses + 1);
+            caractereLu = question[numero].charAt(indexReponses + 1);
             do {
                 indexReponses++;
-                caractereLu = data[numero].charAt(indexReponses);
+                caractereLu = question[numero].charAt(indexReponses);
                 //console.log("Le caractère lu est : " + caractereLu);
                 //console.log("tilde : " + caractereLu.localeCompare('~'));
                 //console.log("accolade " + caractereLu.localeCompare('{'));
@@ -234,7 +274,7 @@ VpfParser.prototype.Reponses = function (data, numero) {
 
     if(nbReponses.length === 1) console.log("La réponse de la question est : " + reponse);
     else console.log("Les réponses possibles à la question sont : " + reponse);
-    //return reponse;
+    return reponse;
 
     //Il faut traiter le numéro de la question
     //Askip ça marche pas pour un type de données

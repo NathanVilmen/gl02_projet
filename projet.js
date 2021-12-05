@@ -353,6 +353,9 @@ program
 			}
 
 			dataReadExam=dataExam;
+			console.log("dataExam = " + dataExam);
+			console.log("dataReadExam = " + dataReadExam);
+
 			analyzerExam.parse(dataExam, pathExam);
 			console.log("On a parsé");
 
@@ -366,7 +369,7 @@ program
 				console.log("\n-- Exercice " + i + " --");
 				console.log(analyzerExam.question[i]);
 				let reponse = prompt("Veuillez rentrer votre réponse, si vous ne voulez rien mettre tapez un \"-\" ");
-				fs.appendFile(pathReponses, reponse, function (err) {
+				fs.appendFile(pathReponses, reponse+'\n', function (err) {
 					if (err) return console.log(err);
 				});
 			}
@@ -379,12 +382,16 @@ program
                 dataReponses=dataReponses.toString().split('\n');
 
                 console.log("Vos réponses sont : " + dataReponses);
-                analyzerResultat.test(dataReadExam, dataReponses);
+                analyzerResultat.test(analyzerExam.question, pathExam, dataReponses);
 
                 for (let i = 0; i < analyzerExam.question.length; i++) {
                     console.log("\n-- Résultat exercice " + i + " --");
+					console.log("filTest[" + i + "][1].length = " + analyzerResultat.filTest[i][1].length);
+					//Trouver autre chose à tester pour la taille. Parce que si c'est un tableau ça nous donne le nombre de case mais si c'est juste une chaine de caractère ça nous donne la taille du String
                     if (analyzerResultat.filTest[i][1].length === 1) {	//Une seule réponse pour la question
-                        if (analyzerResultat.filTest[i][1].localeCompare(analyzerResultat.filTest[i][2]) === 0) {
+						console.log("Réponse à comparer : " + analyzerResultat.filTest[i][1][0]);
+						console.log("Réponse entrée : " + analyzerResultat.filTest[i][2]);
+                        if (analyzerResultat.filTest[i][1][0].localeCompare(analyzerResultat.filTest[i][2]) === 0) {
                             console.log("Vous avez la bonne réponse !");
                         } else {
                             console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzerResultat.filTest[i][1]);
@@ -400,21 +407,18 @@ program
                             }
                         }
                         if(bon===false){
-                            console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzerResultat.filTest[i][1]);
+                            console.log("Vous n'avez pas la bonne réponse, les bonnes réponses étaient " + analyzerResultat.filTest[i][1]);
                             nbErreurs++;
                         }
                     }
                 }
+				console.log("Au final, sur " + analyzerExam.question.length + " exercices, vous avez fait " + nbErreurs + " erreurs");
+
+				//On affiche l'énoncé et les questions en rapport avec l'énoncé
+				//On affiche ensuite les réponses possibles
+				//Puis on affiche un bilan de réponses
             })
 		})
-
-
-
-		console.log("Au final, sur " + analyzerExam.question.length + " exercices, vous avez fait " + nbErreurs + " erreurs");
-
-			//On affiche l'énoncé et les questions en rapport avec l'énoncé
-			//On affiche ensuite les réponses possibles
-			//Puis on affiche un bilan de réponses
 	})
 
 	//Tests Réponses() du parser
