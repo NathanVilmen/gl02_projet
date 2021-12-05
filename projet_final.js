@@ -515,11 +515,21 @@ program
             let pathReponses = prompt("Quel nom voulez vous donner au fichier contenant vos réponses au test ? ");
             pathReponses = "./" + pathReponses + ".gift";  //On génère un fichier en .gift mais ici ça n'a pas d'importance, un fichier .txt aurait marché
 
-            analyzerResultat.test(dataExam, analyzerExam.question, pathExam);
+            analyzerResultat.test(dataExam, pathExam);
 
             for (let i = 0; i < analyzerExam.question.length; i++) {
                 console.log("\n-- Exercice " + i + " --");
-                console.log(analyzerResultat.question[i]);
+                //S'il y a un énoncé on doit l'afficher
+                if(analyzerResultat.enonce[i] !== 0) {
+                    console.log(analyzerResultat.enonce[i]);    //0 pour l'énoncer
+                }
+                //On affiche la question
+                console.log(analyzerExam.filTest[i][0]);
+
+                //Si c'est un choix multiple on doit afficher les réponses possibles
+                if(analyzerResultat.filTest[i][4] === 1){
+                    console.log("Voici les choix possibles : \n " + analyzerResultat.filTest[i][1]);
+                }
                 let reponse = prompt("Veuillez rentrer votre réponse, si vous ne voulez rien mettre tapez un \"-\" ");
                 fs.appendFile(pathReponses, reponse+'\n', function (err) {
                     if (err) return console.log(err);
