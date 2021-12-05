@@ -1,4 +1,4 @@
-const { logger } = require("logger/index");
+//const { logger } = require("logger/index");
 
 var VpfParser=function(){
     // The list of POI parsed from the input file.
@@ -386,5 +386,7 @@ VpfParser.prototype.TypeQuestion = function(data,numero){
     console.log(correspondance);
     return correspondance;
 }
+
+module.exports = VpfParser;
 
 
