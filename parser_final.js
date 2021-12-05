@@ -386,7 +386,6 @@ VpfParser.prototype.TypeQuestion = function(data,numero){
     console.log(correspondance);
     return correspondance;
 }
-
 module.exports = VpfParser;
 
 
