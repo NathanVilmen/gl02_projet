@@ -593,7 +593,6 @@ program
     .argument('<file>', 'Le fichier GIFT à étudier')
     .action(({args, options, logger}) => {
 
-        let tabFichier;
         let types;
 
         fs.readFile(args.file.toString(), 'utf8', function (err,data) {
@@ -603,9 +602,6 @@ program
             //appel du parser avec analyzer sur le premier fichier
             let analyzer = new VpfParser();
             analyzer.test(data);
-
-            //stockage du retour de la donnée parsée, sous forme d'un tableau à 2 dimensions
-            tabFichier = analyzer.filTest;
 
             //Extraction des types de questions, sous forme d'un tableau à 1 dimension
             for(let i=0 ; i < analyzer.filTest.length ; i++){
@@ -679,7 +675,6 @@ program
     //Spec 8
     .command("comparer", "comparer un fichier d'examen avec des fichiers de la banque de question")
     .argument('<file>', 'Le fichier Examen à étudier')
-    //.argument('<file>', 'Le fichier GIFT à étudier') //comment intégrer le fait d'avoir autant d'argument qu'on veut ?
     .action(({args,logger}) => {
 
         let tabExamen;
@@ -748,6 +743,26 @@ program
             //ex : [[1,1,5,3,2],[1,0,0,0,0],[4,4,4,0,0]]
 
             let nbFichiers = prompt("Combien de fichiers voulez-vous comparer au fichier examen ?\n");
+            let matrice;//la matrice qui va contenir tous les tableaux de type de toutes les questions
+
+            for (i = 0 ; i < nbFichiers ; i++){
+
+                let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question : ");
+                fs.readFile(path, 'utf8', function (err,data) {
+                    if (err) {
+                        return logger.warn(err);
+                    }
+                    //appel du parser avec analyzer sur le premier fichier
+                    let parseur = new VpfParser();
+                    parseur.test(data);
+
+                    //Extraction des types de questions, sous forme d'un tableau à 1 dimension
+                    for(let j=0 ; j < parseur.filTest.length ; j++){
+                        matrice[i][j] = parseur.filTest[j][3];
+                    }
+
+                })
+            }
 
             let j = 0;
             let k = 0;
@@ -758,8 +773,8 @@ program
             let nbNUMBanque = 0;
             let nbOUVBanque = 0;
 
-            for(j = 0 ; j <Matrice.length ; j++){
-                for(k = 0 ; k < Matrice[j].length ; k++){
+            for(j = 0 ; j <matrice.length ; j++){
+                for(k = 0 ; k < matrice[j].length ; k++){
                     switch(Matrice[j][k]){
                         case 0 : break;
                         case 1 :
@@ -796,23 +811,32 @@ program
             nbOUVBanque /= nbFichiers;
 
             let comparaison = {
-                "data" : {
-                    "values" : {
-                        "Examen" : [{"Type" : "QCM","Nombre" : nbQCMExamen}, {"Type" : "Vrai-Faux","Nombre" : nbVFExamen}, {"Type" : "Correspondance","Nombre" : nbCORRExamen}, {"Type" : "Mot manquant","Nombre" : nbMMExamen}, {"Type" : "Numérique","Nombre" : nbNUMExamen}, {"Type" : "Ouverte","Nombre" : nbOUVExamen}],
-                        "Banque" : [{"Type" : "QCM","Nombre" : nbQCMBanque}, {"Type" : "Vrai-Faux","Nombre" : nbVFBanque}, {"Type" : "Correspondance","Nombre" : nbCORRBanque}, {"Type" : "Mot manquant","Nombre" : nbMMBanque}, {"Type" : "Numérique","Nombre" : nbNUMBanque}, {"Type" : "Ouverte","Nombre" : nbOUVBanque}],
-                    }
+                "data": {
+                    "values": [
+                        {"fichier": "Examen", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [1, 2,1,0,0,0]},
+                        {"fichier": "Banque", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [1, 1,3,1,5,3]}
+                    ]
                 },
-                "mark" : "bar",
-                "encoding" : {
-                    "x" : {"field" : "Type", "type" : "nominal"},
-                    "y" : {"aggregate" : "average", "field" : "Nombre", "type" : "quantitative",
-                        "axis" : {"title" : "Nombre d'occurrence"}},
-                    "color" : {
-                        "field" : "Type",
-                        "Type" : "Nominal"
-                    }
+                "transform": [{"flatten": ["type", "nombre"]}],
+                "mark": "bar",
+                "encoding": {
+                    "x": {"field": "type", "type": "nominal"},
+                    "y": {"field": "nombre", "type": "quantitative"},
+                    "color": {"field": "fichier", "type": "nominal"}
                 }
             }
+
+            const maComparaison = vegalite.compile(comparaison).spec;
+
+            /* SVG version */
+            var runtime = vg.parse(maComparaison);
+            var view = new vg.View(runtime).renderer('svg').run();
+            var mySvg = view.toSVG();
+            mySvg.then(function(res){
+                fs.writeFileSync("./Profile.svg", res)
+                view.finalize();
+                logger.info("Profil savegardé dans : ./Profile.svg");
+            });
 
         }
     })
