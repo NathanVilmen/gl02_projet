@@ -73,7 +73,7 @@ VpfParser.prototype.parse = function(data,path){
     console.log("Voici la question numéro 2"+this.question[1]);
 }
 
-VpfParser.prototype.test = function(dataExam, pathExam, pathReponses){
+VpfParser.prototype.test = function(dataExam, pathExam, dataReponses){
 
     //On refait un parseur avec un élément de l'objet pasrer qui contient ce qu'on doit afficher dans l'ordre
     //Par exemple: retour[0]--> ça affiche enoncé ou question
@@ -85,11 +85,11 @@ VpfParser.prototype.test = function(dataExam, pathExam, pathReponses){
     //Cas d'un simple énoncé: on mets tous les autres cases à zéro
     console.log("on est dans test");
     var retour=new Array();
-    retour = this.triAffichage(dataExam,pathExam, pathReponses);
+    retour = this.triAffichage(dataExam,pathExam, dataReponses);
     console.log("###################");
 }
 
-VpfParser.prototype.triAffichage = function(dataExam, pathExam, dataReponses, pathReponses){
+VpfParser.prototype.triAffichage = function(dataExam, dataReponses, pathReponses){
 
     console.log("on est dans triAffichage");
 
@@ -117,7 +117,7 @@ VpfParser.prototype.triAffichage = function(dataExam, pathExam, dataReponses, pa
     }
 
     //On sépare les réponses de l'utilisateur
-    dataReponses = dataReponses.split('\n');
+    dataReponses = dataReponses.toString().split('\n');
 
     for(let i=0;i<this.filTest.length;i++){
         this.filTest[i][0]=this.EnonceQuestion(dataExam,i);

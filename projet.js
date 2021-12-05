@@ -341,23 +341,28 @@ program
 	.argument('<fileExam>', 'Le fichier de type examen')
 	.action(({args, logger}) => {
 
-		//U1-p7-Adverbs
 		let pathExam = args.fileExam.toString();
-		//C'est juste en test mais sinon faudrait mettre args.file dans le fs.Read
+		let dataReadExam;
+		let nbErreurs=0;
+		let analyzerExam = new VpfParser();
+		let analyzerResultat = new VpfParser();
+
 		fs.readFile(pathExam, 'utf8', function (err,dataExam) {
 			if (err) {
 				return logger.warn(err);
 			}
 
-			let analyzerExam = new VpfParser();
+			dataReadExam=dataExam;
 			analyzerExam.parse(dataExam, pathExam);
-			let nbErreurs=0;
+			console.log("On a parsé");
 
-			console.log("----- Vous allez passer un examen composé de " + analyzerExam.enonce.length + " exercices -----");
-			let pathReponses = prompt("Quel nom voulez vous donner au fichier contenant vos réponses au test ?");
-			pathReponses = pathReponses+'.gift';	//On génère un fichier en .gift mais ici ça n'a pas d'importance, un fichier .txt aurait marché
+			console.log("----- Vous allez passer un examen composé de " + analyzerExam.question.length + " exercices -----");
+			let pathReponses = prompt("Quel nom voulez vous donner au fichier contenant vos réponses au test ? ");
+			pathReponses = "./" + pathReponses + ".gift";	//On génère un fichier en .gift mais ici ça n'a pas d'importance, un fichier .txt aurait marché
 
-			for (let i = 0; i < analyzerExam.enonce.length; i++) {
+			console.log()
+
+			for (let i = 0; i < analyzerExam.question.length; i++) {
 				console.log("\n-- Exercice " + i + " --");
 				console.log(analyzerExam.question[i]);
 				let reponse = prompt("Veuillez rentrer votre réponse, si vous ne voulez rien mettre tapez un \"-\" ");
@@ -366,33 +371,51 @@ program
 				});
 			}
 
+			console.log("pathReponses = " + pathReponses);
+
 			console.log("----- Vérification du test -----");
-			fs.readFile(pathExam, 'utf8', function (err,dataExam){
-				dataExam=dataExam.split('\n');
+            fs.readFile(pathReponses, 'utf8', function (err,dataReponses){
+                console.log(dataReponses);
+                dataReponses=dataReponses.toString().split('\n');
 
-				console.log("Vos réponses sont : " + dataExam);
-				let analyzer = new VpfParser();
-				analyzer.test(dataExam, pathExam, pathReponses);
+                console.log("Vos réponses sont : " + dataReponses);
+                analyzerResultat.test(dataReadExam, dataReponses);
 
-				for (let i = 0; i < analyzerExam.enonce.length; i++) {
-					console.log("\n-- Résultat exercice " + i + " --");
-					if(analyzer.filTest[i][1].localeCompare(analyzer.filTest[i][2]) === 0){
-						console.log("Vous avez la bonne réponse !");
-					}
-					else{
-						console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzer.filTest[i][1]);
-						nbErreurs++;
-					}
-				}
-			})
-
-			console.log("Au final, sur " + analyzerExam.enonce.length + " exercices, vous avez fait " + nbErreurs + " erreurs");
-
-				//On affiche l'énoncé et les questions en rapport avec l'énoncé
-				//On affiche ensuite les réponses possibles
-				//Puis on affiche un bilan de réponses
-			})
+                for (let i = 0; i < analyzerExam.question.length; i++) {
+                    console.log("\n-- Résultat exercice " + i + " --");
+                    if (analyzerResultat.filTest[i][1].length === 1) {	//Une seule réponse pour la question
+                        if (analyzerResultat.filTest[i][1].localeCompare(analyzerResultat.filTest[i][2]) === 0) {
+                            console.log("Vous avez la bonne réponse !");
+                        } else {
+                            console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzerResultat.filTest[i][1]);
+                            nbErreurs++;
+                        }
+                    }
+                    else {	//Plusieurs réponses pour la question
+                        let bon = false;
+                        for (let j = 0; j < analyzerResultat.filTest[i][1].length; j++) {
+                            if (analyzerResultat.filTest[i][1][j].localeCompare(analyzerResultat.filTest[i][2]) === 0) {
+                                console.log("Vous avez la bonne réponse !");
+                                bon = true;
+                            }
+                        }
+                        if(bon===false){
+                            console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzerResultat.filTest[i][1]);
+                            nbErreurs++;
+                        }
+                    }
+                }
+            })
 		})
+
+
+
+		console.log("Au final, sur " + analyzerExam.question.length + " exercices, vous avez fait " + nbErreurs + " erreurs");
+
+			//On affiche l'énoncé et les questions en rapport avec l'énoncé
+			//On affiche ensuite les réponses possibles
+			//Puis on affiche un bilan de réponses
+	})
 
 	//Tests Réponses() du parser
 	.command('reponse', 'afficher la réponses')
