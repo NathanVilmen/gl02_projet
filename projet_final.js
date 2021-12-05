@@ -807,14 +807,14 @@ program
             nbVFBanque /= nbFichiers;
             nbCORRBanque /= nbFichiers;
             nbMMBanque /= nbFichiers;
-            nbNUMExamen /= nbFichiers;
+            nbNUMBanque /= nbFichiers;
             nbOUVBanque /= nbFichiers;
 
             let comparaison = {
                 "data": {
                     "values": [
-                        {"fichier": "Examen", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [1, 2,1,0,0,0]},
-                        {"fichier": "Banque", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [1, 1,3,1,5,3]}
+                        {"fichier": "Examen", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMExamen, nbVFExamen,nbCORRExamen,nbMMExamen,nbNUMExamen,nbOUVExamen]},
+                        {"fichier": "Banque", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMBanque, nbVFBanque,nbCORRBanque,nbMMBanque,nbNUMBanque,nbOUVBanque]}
                     ]
                 },
                 "transform": [{"flatten": ["type", "nombre"]}],
@@ -833,9 +833,9 @@ program
             var view = new vg.View(runtime).renderer('svg').run();
             var mySvg = view.toSVG();
             mySvg.then(function(res){
-                fs.writeFileSync("./Profile.svg", res)
+                fs.writeFileSync("./ProfilComparaison.svg", res)
                 view.finalize();
-                logger.info("Profil savegardé dans : ./Profile.svg");
+                logger.info("Profil savegardé dans : ./ProfilComparaison.svg");
             });
 
         }
