@@ -60,5 +60,7 @@ group.prototype.triQuestion=function(data, numero){
 }
 
 
+
+
 module.exports = group;
 type: module;
