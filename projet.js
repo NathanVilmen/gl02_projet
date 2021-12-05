@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const prompt = require('prompt-sync')();
-const {VpfParser} = require('./parser.js');
+const VpfParser = require('./parser.js');
 const groupp = require('./group.js');
 
 const cli = require("@caporal/core").default;
 const question = require('./objet.js');
-//const { group, Console } = require('console');
 
 //Ici SPEC 2,3,5 plus une fonction test !!!!!
 cli
@@ -140,7 +139,11 @@ cli
 			if (err) {
 				return logger.warn(err);
 			}
-			
+			var string="// p. 152 Grammar Reference ex. 1: Complete thewith the correct futurkets.::U6 p61 GR 1.0 Future forms::Compe correct future fets."
+			var separator='::U';
+			string = string.replace(/::U/gi, ","+separator);
+			string = string.split(",");
+			console.log(string);
 		});
 			
 	})
@@ -222,8 +225,11 @@ cli
 					console.log("Le fichier numéro " + i + " correspond à vos recherches");
 					
 					//On parse le fichier 
-					var analyzer=new VpfParser();
+					let analyzer=new VpfParser();
+					console.log("On a créée le pasrer");
 					analyzer.separer(data);
+
+					console.log("Voici this.Question "+this.question);
 
 					//On a les énoncés associés à toutes les questions
 					//On vérifie quels énoncés contiennent ce mot

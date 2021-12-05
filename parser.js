@@ -1,5 +1,6 @@
+const { logger } = require("logger/index");
 
-function VpfParser(){
+var VpfParser=function(){
 	// The list of POI parsed from the input file.
 	this.question = new Array();
     this.enonce=new Array();
@@ -14,18 +15,24 @@ VpfParser.prototype.separer = function(data){
     //On détecte l'énoncé lorsqu'il n'y a pas d'accolade!!
 	//Il faut trier le fichier écrit
     var seoarator;
-    if(path[14]=="U"){
+    if(data.includes('::U')){
         separator = ('::U');
     }
-    else{//Le fichier commence par EM
+    else if(data.includes('::EM')){//Le fichier commence par EM
         separator=('::EM')
     }
+    else{
+        logger.info("Erreur, le fichier n'est pas en format GIFT");
+    }
 
-	data = data.split(separator);
-	data = data.filter((val,idx) => !val.match(separator)); 
+	string = string.replace(/::U/gi, ","+separator);
+	string = string.split(",");
 
     //On supprime le premier élément car ce n'est ni un énoncé s'il contient le mot Unit (c'est ni un énoncé ni une uestion)
-    if(data[0].includes("Unit")){
+    if(data[0].includes(separator)){
+        data.shift();
+    }
+    else if(data[0].includes(separator)){
         data.shift();
     }
 
@@ -120,15 +127,13 @@ VpfParser.prototype.triAffichage = function(data,path){
     //On sépare tous les blocs
     data=data.split(separator);
     for(let i=0;i<data.length;i++){
-        if(data[i].includes("{")){//C'est une question
-            //On initialise le tableau à 2 dimensions à la bonne dimmensions
-            //Il sera de taille 4:
-            //0:Enoncé ou question
-            //1:Affichage de réponses si il y a
-            //2:Réponses correctes
-            //3:Type de la question
-            this.filTest[i]=new Array(4);
-        } 
+        //On initialise le tableau à 2 dimensions à la bonne dimmensions
+        //Il sera de taille 4:
+        //0:Enoncé ou question
+        //1:Affichage de réponses si il y a
+        //2:Réponses correctes
+        //3:Type de la question
+        this.filTest[i]=new Array(4);
     }
 
     for(let i=0;i<this.filTest.length;i++){
@@ -152,7 +157,7 @@ VpfParser.prototype.EnonceQuestion = function(data,numero){
     var re = /(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)|(\[marked\])|(<\/small>)|(<small>)/gi;
 
     //Si c'est un énoncé
-    if(EnonceParsed.includes("{")){
+    if(!EnonceParsed.includes("{")){
         EnonceParsed=EnonceParsed.replace(re,'');
     }
     else{//Si c'est une question --> on retire les réponses et on ajoute __ à la place
@@ -164,7 +169,7 @@ VpfParser.prototype.EnonceQuestion = function(data,numero){
     return EnonceParsed;
 }
 
-VpfParser.prototype.EnonceQuestion = function(data,numero){
+VpfParser.prototype.TypeQuestion = function(data,numero){
 
     console.log("On est dans tri Type Question");
     //Il y a choix multiples (1), vrai-faux (2),correspondance (3), mot manquant (4), numérique (5),question ouverte (6)
@@ -220,7 +225,7 @@ VpfParser.prototype.EnonceQuestion = function(data,numero){
     //S'il contient plusieurs "~"  il y a plusieurs choix donc c'est un MC--> on renvoie 1
     else if(EnonceParsed.match(/~/g)!== null && EnonceParsed.match(/~/g).length>1){
         correspondance=1;
-        onsole.log("C'est un MC");
+        console.log("C'est un MC");
     }
     //Il reste que question libre -->on renvoie 6
     //S'il contient 'digit..digit'|'digit:digit'|'=digit' c'est un type numérique --> on renvoie 5
@@ -230,6 +235,7 @@ VpfParser.prototype.EnonceQuestion = function(data,numero){
         console.log("C'est un numérique");
     }
     console.log(correspondance);
+    return correspondance;
 }
 module.exports = VpfParser;
 
