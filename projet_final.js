@@ -598,7 +598,7 @@ program
                 if(analyzerExam.question[i].match(symbole2).length >= 2){  //On a plusieurs questions pour 1 exercice
                     for (let j = 0; j < analyzerResultat.filTest[i][1].length; j++) {
                         if(analyzerResultat.filTest[i][2] === 1){
-                            console.log("Voici les choix possibles : \n " + analyzerResultat.filTest[i][1]);
+                            console.log("Voici les choix possibles : \n" + analyzerResultat.filTest[i][1]);
                         }
                         reponse[i][j] = prompt("Veuillez rentrer votre réponse à la question n°" + j + ", si vous ne voulez rien mettre tapez un \"-\" ");
                         fs.appendFile(pathReponses, reponse[i][j]+'\n', function (err) {
@@ -608,7 +608,7 @@ program
                 }
                 else{   //On a 1 question pour 1 exercice
                     if(analyzerResultat.filTest[i][2] === 1){
-                        console.log("Voici les choix possibles : \n " + analyzerResultat.filTest[i][1]);
+                        console.log("Voici les choix possibles : \n" + analyzerResultat.filTest[i][1]);
                     }
                     reponse[i][0] = prompt("Veuillez rentrer votre réponse à la question, si vous ne voulez rien mettre tapez un \"-\" ");
                     fs.appendFile(pathReponses, reponse[i][0]+'\n', function (err) {
@@ -650,7 +650,7 @@ program
                     if (reponse[i].length === 1 && analyzerExam.question[i].match(symbole2).length===analyzerExam.question[i].match(symbole1).length) {  //Une seule réponse juste pour la question
                         console.log("Réponse à comparer : " + analyzerResultat.filTest[i][1][0]);
                         console.log("Réponse entrée : " + reponse[i][0]);
-                        if (analyzerResultat.filTest[i][1][0].localeCompare(reponse[i][0]) === 0) {
+                        if (analyzerResultat.filTest[i][1][0].trim().localeCompare(reponse[i][0]) === 0) {   //trimEnd pour supprimer les espaces inutiles
                             console.log("Vous avez la bonne réponse !");
                         } else {
                             console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzerResultat.filTest[i][1]);
@@ -663,7 +663,7 @@ program
                             console.log("Vous avez entré " + reponse[i].length + " réponses");
                             console.log("A comparer : " + reponse[i][j]);
                             console.log("La solution est : " + analyzerResultat.filTest[i][1][j]);
-                            if (analyzerResultat.filTest[i][1][j].localeCompare(reponse[i][j]) === 0) {
+                            if (analyzerResultat.filTest[i][1][j].trim().localeCompare(reponse[i][j]) === 0) {
                                 console.log("Vous avez la bonne réponse !");
                             }
                             else{
@@ -677,7 +677,7 @@ program
                     else{  //Plusieurs réponses pour la question
                         let bon = false;
                         for (let j = 0; j < analyzerResultat.filTest[i][1].length; j++) {
-                            if (analyzerResultat.filTest[i][1][j].localeCompare(reponse[i][0]) === 0) {
+                            if (analyzerResultat.filTest[i][1][j].trim().localeCompare(reponse[i][0]) === 0) {
                                 console.log("Vous avez la bonne réponse !");
                                 bon = true;
                             }

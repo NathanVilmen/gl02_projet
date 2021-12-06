@@ -245,7 +245,7 @@ VpfParser.prototype.Reponses = function (question, numero) {
                         //reponse.append(caractereLu);
                         reponse[0] = reponse[0] + caractereLu;
                         //On supprime les \n de la réponse
-                        reponse[0]=reponse[0].replace(/\n|\r/g, '');
+                        reponse[0]=reponse[0].replace(/\n|\r|\t/g, '');
                     }
                     //console.log("La réponse est maintenant : " + reponse)
                 } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0);
@@ -270,7 +270,7 @@ VpfParser.prototype.Reponses = function (question, numero) {
                             reponse[i] = reponse[i] + caractereLu;
 
                             //On supprime les \n de la réponse
-                            reponse[i]=reponse[i].replace(/\n|\r/g, '');
+                            reponse[i]=reponse[i].replace(/\n|\r|\t/g, '');
                         }
                         //console.log("La réponse est maintenant : " + reponse[i])
                     } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0);
