@@ -7,14 +7,36 @@ const VpfParser = require('./parser_final.js');
 const { program } = require("@caporal/core");
 const { group } = require('console');
 const path = require("path");
+//const { scaleTypePrecedence } = require('vega-lite/build/src/scale');
 
 //const vg = require('vega');
 //const vegalite = require('vega-lite');
 
 program
+    .command('essai', "juste des tests")
+    //pas d'argument
+    .action((logger) => {
+
+        let pathName="./SujetB_data/U2-p22-Gra-Ing_or_inf.gift";
+
+        fs.readFile(pathName, 'utf8', function (err,data) {
+            if (err) {
+                return logger.warn(err);
+            }
+            
+            let analyzer=new VpfParser();
+            let analyz2=new VpfParser();
+            //analyz2.parse(data);
+            analyzer.test(data);
+        })   
+    })
+
+
+
+
     // Sert à séparer le fichier par question
-    .version('vpf-parser-cli')
-    .version('0.07')
+    //.version('vpf-parser-cli')
+    //.version('0.07')
     //Spec 1
     .command('contact', "Générer un fichier d'identification vCard")
     //pas d'argument
@@ -98,11 +120,11 @@ program
     //**************************************************************
     //Spec2
     // Sert à séparer le fichier par question
-    .command('group', 'Check if <file> is a valid Vpf file, add one question to a file')
+    .command('group', 'Ajouter une question à un fichier examen souhaité')
+    .argument("<numF>", "C'est le numéro du fichier souhaité")
+    .argument("<numEnonce>", "C'est le num de l'énoncé qu'il faut indiquer")
     .argument("<numQ>", "C'est le numéro de la question souhaitée")
-    .argument("<numF>", "C'est le numéro du fichier souhiaté")
-    .argument("<nomF>", "C'est le nom du fichier d'exmen souhaité")
-    .argument("<nomEnonce>", "C'est le num de l'énoncé qu'il faut indiquer")
+    .argument("<nomF>", "C'est le nom du fichier d'examen souhaité")
     .action(({args,logger}) => {
 
         //On définit la Map pour pouvoir associer le numéro de fichier à un path
@@ -156,14 +178,14 @@ program
         myMap.set(46, "./SujetB_data/U5-p50-Use_of_English.gift");
 
         var numF=args.numF;
-        var nomF=args.nomF;
-        var numQ=args.numQ;
         var numEnonce=args.numEnonce;
+        var numQ=args.numQ;
+        var nomF=args.nomF;
 
         console.log("Voici le numero du fichier:"+numF);
-        console.log("Voici le nom du fichier:"+nomF);
+        console.log("Voici le numero de l'énoncé':"+numEnonce);
         console.log("Voici le numero de la question:"+numQ);
-        console.log("Voici le numero de la question:"+numEnonce);
+        console.log("Voici le nom du fichier:"+nomF);
 
 
         var path=myMap.get(numF);
@@ -180,29 +202,26 @@ program
             var analyzer=new VpfParser();
             analyzer.parse(data)
 
-            //On repère le type du fichier
-            var typeFichier;
-            if(path.includes('EM-')){
-                typeFichier='::EM';
-            }
-            else{
-                ypeFichier='::U';
-            }
-
             console.log("Voici la question:"+analyzer.question[numEnonce][numQ]);
 
             //on écrit l'énoncé et la question qui lui correspond
-            //Si l'énoncé est égale à zéro--> il n'y a pas d'énoncé à cette question donc on affiche pas l'énoncé
-            if(numEnonce===0){
-                fs.appendFile(pathNewFile, typeFichier+analyzer.question[numEnonce][numQ], function (err) {
+            //Si l'énoncé est égale à -1--> il n'y a pas d'énoncé à cette question donc on affiche pas l'énoncé
+            if(numEnonce===(-1)){
+                var data=analyzer.question[numQ];
+                data=data.toString();
+                fs.appendFile(pathNewFile, data, function (err) {
                     if (err) return console.log(err);
                 });
             }
             else{
-                fs.appendFile(pathNewFile, typeFichier+analyzer.enonce[numEnonce], function (err) {
+                var data=analyzer.enonce[numEnonce];
+                var data2=analyzer.question[numEnonce][numQ];
+                data=data.toString();
+                data2=data2.toString();
+                fs.appendFile(pathNewFile, data, function (err) {
                     if (err) return console.log(err);
                 });
-                fs.appendFile(pathNewFile, typeFichier+analyzer.question[numEnonce][numQ], function (err) {
+                fs.appendFile(pathNewFile, data2, function (err) {
                     if (err) return console.log(err);
                 });
             }
@@ -275,53 +294,92 @@ program
         //Tableau qui contient les caractéristiques de recherche
         var recherche=new Array();
 
-        for (let i = 0; i < 47; i++) {
+        for (let i = 0; i < 3; i++) {
             let path = myMap.get(i);
             //console.log("Le path est : " + path);
-
             fs.readFile(path, 'utf8', function (err,data){
                 if (err) {
                     return logger.warn(err)
                 }
-                if(data.toLowerCase().includes(typeExercice.toLowerCase())){	//toLowerCase() pour ne pas être sensible à la casse
+                if(data.includes(typeExercice)){	//toLowerCase() pour ne pas être sensible à la casse
                     //On affiche le fichier
                     console.log("Le fichier numéro " + i + " correspond à vos recherches");
 
+                    
                     //On parse le fichier
                     let analyzer=new VpfParser();
-                    console.log("On a créée le pasrer");
-                    analyzer.separer(data);
+                    analyzer.parse(data);
 
-                    console.log("Voici this.Question "+this.question);
+                    //console.log("Voici this.Question "+analyzer.question);
+                    console.log("taille enonce"+analyzer.enonce.length);
+                    
+                    if(analyzer.enonce.length>=2){
 
-                    //On a les énoncés associés à toutes les questions
-                    //On vérifie quels énoncés contiennent ce mot
-                    for(let k=0;k<this.enonce.length;k++){
-                        if(this.enonce[k].toLowerCase().includes(typeExercice.toLowerCase())){
+                        //On a les énoncés associés à toutes les questions
+                        //On vérifie quels énoncés contiennent ce mot
+                        for(let k=0;k<analyzer.enonce.length;k++){
+                            if(analyzer.enonce[k].includes(typeExercice)){
+                                
+                                
+                                //Il faut penser à afficher les questions sans énoncés avant le premier énoncé qui peuvent contenir ce mot aussi
+                                for(let y=0;y<analyzer.question[0].length;y++){
+                                    if(analyzer.question[0].includes(typeExercice)){
+                                        console.log("Choississez le numéro de question"+y+" si vous voulez cette question");
+                                        console.log(analyzer.question[0][y]);
+    
+                                        console.log("Cette question correspond");
+                                        console.log("Numéro de fichier: "+i);
+                                        console.log("Numéro d'énoncés: "+0);
+                                        console.log("Numéro de question: "+y);
+                                    }
+                                }
+                                
+                                //On affiche toutes les questions
+                                for(let y=0;y<analyzer.question[k].length;y++){
+                                    console.log("Choississez le numéro de question"+y+" si vous voulez cette question");
+                                    console.log(analyzer.question[k][y]);
 
-                            console.log("L'énoncé numéro "+k+" correspond à votre recherche");
-                            //On affiche toutes les questions
-
-                            for(let y=0;y<this.question[k][y].length;y++){
-                                console.log("Choississez le numéro de question"+y+" si vous voulez cette question");
-                                console.log(question[k][y]);
-
-                                var choixQ=prompt("Choisissez vous cette question? (Vous pourrez en chosir une autre après)");
-
-                                recherche[0]=i;
-                                recherche[1]=k;
-                                recherche[2]=choixQ;
+                                    console.log("Cette question correspond");
+                                    console.log("Numéro de fichier: "+i);
+                                    console.log("Numéro d'énoncé: "+k);
+                                    console.log("Numéro de questions: "+y);                                 
+                                }
+                            }
+                            //Si aucun énoncé ne contient ce mot
+                            //On affiche seulement les questions qui les contiennent dans ces énoncés
+                            else{
+                                for(let y=0;y<analyzer.question[k].length;y++){
+                                    if(analyzer.question[k][y].includes(typeExercice)){
+        
+                                        console.log(analyzer.question[k][y]);
+        
+                                        console.log("Cette question correspond");
+                                        console.log("Numéro de fichier: "+i);
+                                        console.log("Numéro d'énoncé: "+k);
+                                        console.log("Numéro de question: "+y); 
+                                    }  
+                                }
                             }
                         }
                     }
+                    //Il n'y a pas d'énoncé
+                    else{
+                        console.log("on est là");
+                        for(let y=0;y<analyzer.question.length;y++){
+                            if(analyzer.question[y].includestypeExercice.toLowerCase()()){
+
+                                console.log(analyzer.question[y]);
+
+                                console.log("Cette question correspond");
+                                console.log("Numéro de fichier: "+i);
+                                console.log("Numéro d'énoncé: "+(-1));
+                                console.log("Numéro de question: "+y); 
+                            }  
+                        }
+                    }      
                 }
             })
         }
-
-        //Affichage des choix
-        console.log("Vous avez choisi le fichier numéro "+recherche[0]);
-        console.log("Vous avez choisi l'énoncé' numéro "+recherche[1]);
-        console.log("Vous avez choisi la question numéro "+recherche[2]);
     })
 
     /////////############# SPEC 4
