@@ -309,6 +309,8 @@ VpfParser.prototype.TypeQuestion = function(data,numero){
 
         console.log("Contenu de la première réponse:"+EnonceParsed);
 
+        console.log("********** L'énonce parsed est : " + EnonceParsed);
+
         //On a le contenu de la réponses
         //Si il contient une flèche c'est un type "correspondance"--> on renvoie 3
         if(EnonceParsed.includes("->")){
@@ -320,6 +322,12 @@ VpfParser.prototype.TypeQuestion = function(data,numero){
             correspondance=6;
             console.log("C'est une question ouverte");
         }
+            //Il reste que MC--> on renvoie 1
+        //S'il contient plusieurs "~"  il y a plusieurs choix donc c'est un MC--> on renvoie 1
+        else if(EnonceParsed.match(/~/g)!== null && EnonceParsed.match(/~/g).length>1){
+            correspondance=1;
+            console.log("C'est un MC");
+        }
             //S'il contient true ou false c'est un type vrai/faux --> on renvoie 2
         //| 'TRUE'|'T'|'FALSE'
         else if((EnonceParsed.includes('F') || EnonceParsed.includes('T') || EnonceParsed.includes('TRUE')) || (EnonceParsed.includes('FALSE')) && (!EnonceParsed.includes('='))){
@@ -330,12 +338,6 @@ VpfParser.prototype.TypeQuestion = function(data,numero){
         else if(EnonceParsed.match(/~/g)== null){
             correspondance=4;
             console.log("C'est un mot manquant");
-        }
-        //Il reste que MC--> on renvoie 1
-        //S'il contient plusieurs "~"  il y a plusieurs choix donc c'est un MC--> on renvoie 1
-        else if(EnonceParsed.match(/~/g)!== null && EnonceParsed.match(/~/g).length>1){
-            correspondance=1;
-            console.log("C'est un MC");
         }
             //Il reste que question libre -->on renvoie 6
             //S'il contient 'digit..digit'|'digit:digit'|'=digit' c'est un type numérique --> on renvoie 5
