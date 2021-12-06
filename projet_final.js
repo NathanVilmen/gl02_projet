@@ -706,7 +706,7 @@ program
     .argument('<file>', 'Le fichier GIFT à étudier')
     .action(({args, options, logger}) => {
 
-        let types;
+        let types = Array();
 
         fs.readFile(args.file.toString(), 'utf8', function (err,data) {
             if (err) {
@@ -791,7 +791,7 @@ program
     .action(({args,logger}) => {
 
         let tabExamen;
-        let tabExamenExtrait;
+        let tabExamenExtrait = Array();
 
         fs.readFile(args.file.toString(), 'utf8', function (err,data) {
             if (err) {
