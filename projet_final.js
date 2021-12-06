@@ -573,11 +573,21 @@ program
             let pathReponses = prompt("Quel nom voulez vous donner au fichier contenant vos réponses au test ? ");
             pathReponses = "./" + pathReponses + ".gift";  //On génère un fichier en .gift mais ici ça n'a pas d'importance, un fichier .txt aurait marché
 
-            analyzerResultat.test(dataExam, analyzerExam.question, pathExam);
+            analyzerResultat.test(dataExam, pathExam);
 
             for (let i = 0; i < analyzerExam.question.length; i++) {
                 console.log("\n-- Exercice " + i + " --");
-                console.log(analyzerResultat.question[i]);
+                //S'il y a un énoncé on doit l'afficher
+                if(analyzerResultat.enonce[i] !== 0) {
+                    console.log(analyzerResultat.enonce[i]);    //0 pour l'énoncer
+                }
+                //On affiche la question
+                console.log(analyzerExam.filTest[i][0]);
+
+                //Si c'est un choix multiple on doit afficher les réponses possibles
+                if(analyzerResultat.filTest[i][4] === 1){
+                    console.log("Voici les choix possibles : \n " + analyzerResultat.filTest[i][1]);
+                }
                 let reponse = prompt("Veuillez rentrer votre réponse, si vous ne voulez rien mettre tapez un \"-\" ");
                 fs.appendFile(pathReponses, reponse+'\n', function (err) {
                     if (err) return console.log(err);
@@ -641,7 +651,6 @@ program
     .argument('<file>', 'Le fichier GIFT à étudier')
     .action(({args, options, logger}) => {
 
-        let tabFichier;
         let types;
 
         fs.readFile(args.file.toString(), 'utf8', function (err,data) {
@@ -651,9 +660,6 @@ program
             //appel du parser avec analyzer sur le premier fichier
             let analyzer = new VpfParser();
             analyzer.test(data);
-
-            //stockage du retour de la donnée parsée, sous forme d'un tableau à 2 dimensions
-            tabFichier = analyzer.filTest;
 
             //Extraction des types de questions, sous forme d'un tableau à 1 dimension
             for(let i=0 ; i < analyzer.filTest.length ; i++){
@@ -727,7 +733,6 @@ program
     //Spec 8
     .command("comparer", "comparer un fichier d'examen avec des fichiers de la banque de question")
     .argument('<file>', 'Le fichier Examen à étudier')
-    //.argument('<file>', 'Le fichier GIFT à étudier') //comment intégrer le fait d'avoir autant d'argument qu'on veut ?
     .action(({args,logger}) => {
 
         let tabExamen;
@@ -796,6 +801,26 @@ program
             //ex : [[1,1,5,3,2],[1,0,0,0,0],[4,4,4,0,0]]
 
             let nbFichiers = prompt("Combien de fichiers voulez-vous comparer au fichier examen ?\n");
+            let matrice;//la matrice qui va contenir tous les tableaux de type de toutes les questions
+
+            for (i = 0 ; i < nbFichiers ; i++){
+
+                let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question : ");
+                fs.readFile(path, 'utf8', function (err,data) {
+                    if (err) {
+                        return logger.warn(err);
+                    }
+                    //appel du parser avec analyzer sur le premier fichier
+                    let parseur = new VpfParser();
+                    parseur.test(data);
+
+                    //Extraction des types de questions, sous forme d'un tableau à 1 dimension
+                    for(let j=0 ; j < parseur.filTest.length ; j++){
+                        matrice[i][j] = parseur.filTest[j][3];
+                    }
+
+                })
+            }
 
             let j = 0;
             let k = 0;
@@ -806,8 +831,8 @@ program
             let nbNUMBanque = 0;
             let nbOUVBanque = 0;
 
-            for(j = 0 ; j <Matrice.length ; j++){
-                for(k = 0 ; k < Matrice[j].length ; k++){
+            for(j = 0 ; j <matrice.length ; j++){
+                for(k = 0 ; k < matrice[j].length ; k++){
                     switch(Matrice[j][k]){
                         case 0 : break;
                         case 1 :
@@ -840,27 +865,36 @@ program
             nbVFBanque /= nbFichiers;
             nbCORRBanque /= nbFichiers;
             nbMMBanque /= nbFichiers;
-            nbNUMExamen /= nbFichiers;
+            nbNUMBanque /= nbFichiers;
             nbOUVBanque /= nbFichiers;
 
             let comparaison = {
-                "data" : {
-                    "values" : {
-                        "Examen" : [{"Type" : "QCM","Nombre" : nbQCMExamen}, {"Type" : "Vrai-Faux","Nombre" : nbVFExamen}, {"Type" : "Correspondance","Nombre" : nbCORRExamen}, {"Type" : "Mot manquant","Nombre" : nbMMExamen}, {"Type" : "Numérique","Nombre" : nbNUMExamen}, {"Type" : "Ouverte","Nombre" : nbOUVExamen}],
-                        "Banque" : [{"Type" : "QCM","Nombre" : nbQCMBanque}, {"Type" : "Vrai-Faux","Nombre" : nbVFBanque}, {"Type" : "Correspondance","Nombre" : nbCORRBanque}, {"Type" : "Mot manquant","Nombre" : nbMMBanque}, {"Type" : "Numérique","Nombre" : nbNUMBanque}, {"Type" : "Ouverte","Nombre" : nbOUVBanque}],
-                    }
+                "data": {
+                    "values": [
+                        {"fichier": "Examen", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMExamen, nbVFExamen,nbCORRExamen,nbMMExamen,nbNUMExamen,nbOUVExamen]},
+                        {"fichier": "Banque", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMBanque, nbVFBanque,nbCORRBanque,nbMMBanque,nbNUMBanque,nbOUVBanque]}
+                    ]
                 },
-                "mark" : "bar",
-                "encoding" : {
-                    "x" : {"field" : "Type", "type" : "nominal"},
-                    "y" : {"aggregate" : "average", "field" : "Nombre", "type" : "quantitative",
-                        "axis" : {"title" : "Nombre d'occurrence"}},
-                    "color" : {
-                        "field" : "Type",
-                        "Type" : "Nominal"
-                    }
+                "transform": [{"flatten": ["type", "nombre"]}],
+                "mark": "bar",
+                "encoding": {
+                    "x": {"field": "type", "type": "nominal"},
+                    "y": {"field": "nombre", "type": "quantitative"},
+                    "color": {"field": "fichier", "type": "nominal"}
                 }
             }
+
+            const maComparaison = vegalite.compile(comparaison).spec;
+
+            /* SVG version */
+            var runtime = vg.parse(maComparaison);
+            var view = new vg.View(runtime).renderer('svg').run();
+            var mySvg = view.toSVG();
+            mySvg.then(function(res){
+                fs.writeFileSync("./ProfilComparaison.svg", res)
+                view.finalize();
+                logger.info("Profil savegardé dans : ./ProfilComparaison.svg");
+            });
 
         }
     })
