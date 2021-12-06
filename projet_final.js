@@ -583,7 +583,7 @@ program
                     console.log(analyzerResultat.enonce[i]);    //0 pour l'énoncer
                 }
                 //On affiche la question
-                console.log(analyzerExam.filTest[i][0]);
+                console.log(analyzerResultat.filTest[i][0]);
 
                 //Si c'est un choix multiple on doit afficher les réponses possibles
                 if(analyzerResultat.filTest[i][4] === 1){

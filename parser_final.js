@@ -148,7 +148,7 @@ VpfParser.prototype.triAffichage = function(data){
 
     for(let i=0;i<this.filTest.length;i++){
         this.filTest[i][0]=this.EnonceQuestion(data,i);
-        //this.filTest[i][1]=this.Reponses(data,i);
+        this.filTest[i][1]=this.Reponses(data,i);
         this.filTest[i][2]=this.TypeQuestion(data,i);
     }
 
