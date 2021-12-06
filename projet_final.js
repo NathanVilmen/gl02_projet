@@ -294,7 +294,7 @@ program
         //Tableau qui contient les caractéristiques de recherche
         var recherche=new Array();
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 47; i++) {
             let path = myMap.get(i);
             //console.log("Le path est : " + path);
             fs.readFile(path, 'utf8', function (err,data){
@@ -510,27 +510,28 @@ program
     //****************************************************************
     //Spec 5
     .command('QualitéNombre', 'Check if <file> is a valid: contains between 15 and 20 questions')
-    .argument("<file>", "C'est le numéro de la question souhaitée")
+    .argument("<file>", "C'est le chemin du fichier à tester")
     .action(({args,logger}) => {
 
+        var path="./SujetB_data/EM-U4-p32_33-Review.gift";
         fs.readFile(path, 'utf8', function (err,data) {
             if (err) {
                 return logger.warn(err);
             }
             //On parse le fichier pour séparer les questions des énoncés et compter les questions
-            var analyze=new VpfParser();
-            analyzer.parse();
+            var analyzer=new VpfParser();
+            analyzer.parse(data);
 
             var count=0;
             //On compte le nombre de questions
             for(let i=0;i<analyzer.enonce.length;i++){
-
                 for(let y=0;y<analyzer.question[i].length;y++){
 
                     count++;
-                    console.log("Le nombre de questions est:"+count);
                 }
             }
+
+            console.log("Le nombre de questions est:"+count);
 
             if(count<15 || count>20){
                 console.log("ERREUR! Le nombre de questions est invalide.");

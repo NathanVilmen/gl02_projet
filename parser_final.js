@@ -32,7 +32,7 @@ VpfParser.prototype.separer = function(data) {
     if (!data[0].includes(separator)) {
         data.shift();
     }
-    console.log("WTFFFFF         "+data[0]);
+    
     let tabQuestions =[];
     let tabEnonce = [];
 
@@ -64,8 +64,6 @@ VpfParser.prototype.separer = function(data) {
                 //console.log("C'est une question:" + data[i]);
             }
             else{
-
-                console.log("hhhhhhhhhh");
                 console.log(tabQuestions);
                 data[i]="::U"+data[i];
                 tabQuestions[i]=data[i];
