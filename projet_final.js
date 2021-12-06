@@ -576,7 +576,13 @@ program
 
             analyzerResultat.test(dataExam, pathExam);
 
+            //On crée un tableau pour stocker les résultats
+            let reponse = new Array(analyzerExam.question.length);
+            const symbole1 = /=/g;
+            const symbole2 = /{/g;
+
             for (let i = 0; i < analyzerExam.question.length; i++) {
+                reponse[i] = new Array(analyzerExam.question[i].match(symbole2).length) //Il y a autant de réponses à une question que de questions
                 console.log("\n-- Exercice " + i + " --");
                 //S'il y a un énoncé on doit l'afficher
                 if(analyzerResultat.enonce[i] !== undefined) {
@@ -585,18 +591,32 @@ program
                 //On affiche la ou les questions
                 console.log("taille EnonceQuestion : " + analyzerResultat.filTest[i][0].length);
                 console.log("Dans l'exercice il y a " + analyzerResultat.filTest[i][1].length + " questions");
-                console.log("Le type de l'exercice est " + analyzerResultat.filTest[i][4]);
+                console.log("Le type de l'exercice est " + analyzerResultat.filTest[i][2]);
                 console.log("\nL'exercice est :\n" + analyzerResultat.filTest[i][0]);
-                for (let j = 0; j < analyzerResultat.filTest[i][1].length; j++) {
-                    //Si c'est un choix multiple on doit afficher les réponses possibles
-                    if(analyzerResultat.filTest[i][4] === 1){
+
+                //console.log("L'énoncé est : " + analyzerResultat.filTest[i][0]);
+                if(analyzerExam.question[i].match(symbole2).length >= 2){  //On a plusieurs questions pour 1 exercice
+                    for (let j = 0; j < analyzerResultat.filTest[i][1].length; j++) {
+                        if(analyzerResultat.filTest[i][2] === 1){
+                            console.log("Voici les choix possibles : \n " + analyzerResultat.filTest[i][1]);
+                        }
+                        reponse[i][j] = prompt("Veuillez rentrer votre réponse à la question n°" + j + ", si vous ne voulez rien mettre tapez un \"-\" ");
+                        fs.appendFile(pathReponses, reponse[i][j]+'\n', function (err) {
+                            if (err) return console.log(err);
+                        });
+                    }
+                }
+                else{   //On a 1 question pour 1 exercice
+                    if(analyzerResultat.filTest[i][2] === 1){
                         console.log("Voici les choix possibles : \n " + analyzerResultat.filTest[i][1]);
                     }
-                    let reponse = prompt("Veuillez rentrer votre réponse à la question n°" + j + ", si vous ne voulez rien mettre tapez un \"-\" ");
-                    fs.appendFile(pathReponses, reponse+'\n', function (err) {
+                    reponse[i][0] = prompt("Veuillez rentrer votre réponse à la question, si vous ne voulez rien mettre tapez un \"-\" ");
+                    fs.appendFile(pathReponses, reponse[i][0]+'\n', function (err) {
                         if (err) return console.log(err);
                     });
                 }
+
+
 
                 /*console.log("La question est :\n" + analyzerResultat.filTest[i][0]);
 
@@ -616,33 +636,34 @@ program
 
             console.log("----- Vérification du test -----");
             fs.readFile(pathReponses, 'utf8', function (err,dataReponses){
-                console.log(dataReponses);
-                dataReponses=dataReponses.toString().split('\n');
+                //console.log(dataReponses);
+                //dataReponses=dataReponses.toString().split('\n');
                 let exerciceAvecPlusieursQuestions  = 0;
 
-                console.log("Vos réponses sont : " + dataReponses);
-                console.log("dataReponses[0] = " + dataReponses[0]);
+                console.log("Vos réponses sont : " + reponse);
+                console.log("reponse[0] = " + reponse[0]);
 
                 for (let i = 0; i < analyzerExam.question.length; i++) {
                     console.log("\n-- Résultat exercice " + i + " --");
                     console.log("filTest[" + i + "][1].length = " + analyzerResultat.filTest[i][1].length);
                     //Trouver autre chose à tester pour la taille. Parce que si c'est un tableau ça nous donne le nombre de case mais si c'est juste une chaine de caractère ça nous donne la taille du String
-                    if (analyzerResultat.filTest[i][1].length === 1) {  //Une seule réponse pour la question
-                        console.log("Réponse à comparer : " + dataReponses[i+exerciceAvecPlusieursQuestions]);
-                        console.log("Réponse entrée : " + analyzerResultat.filTest[i][1][0]);
-                        if (analyzerResultat.filTest[i][1][0].localeCompare(dataReponses[i+exerciceAvecPlusieursQuestions]) === 0) {
+                    if (reponse[i].length === 1 && analyzerExam.question[i].match(symbole2).length===analyzerExam.question[i].match(symbole1).length) {  //Une seule réponse juste pour la question
+                        console.log("Réponse à comparer : " + analyzerResultat.filTest[i][1][0]);
+                        console.log("Réponse entrée : " + reponse[i][0]);
+                        if (analyzerResultat.filTest[i][1][0].localeCompare(reponse[i][0]) === 0) {
                             console.log("Vous avez la bonne réponse !");
                         } else {
                             console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzerResultat.filTest[i][1]);
                             nbErreurs++;
                         }
                     }
-                    else if(analyzerResultat.filTest[i][1].length !== 1){   //1 réponse pour 1 question d’un exercice comportant plusieurs questions, ici il faut tester quand Alexis aura mis à jour le parser EnonceQuestion(), s'il met une question par case on test sur le nombdre de EnonceQuestion
+                    else if(reponse[i].length !== 1){   //1 réponse pour 1 question d’un exercice comportant plusieurs questions, ici il faut tester quand Alexis aura mis à jour le parser EnonceQuestion(), s'il met une question par case on test sur le nombdre de EnonceQuestion
                         //Sinon on doit
-                        for (let j = 0; j < analyzerResultat.filTest[i][1].length; j++) {
-                            console.log("A comparer : " + analyzerResultat.filTest[i][1][j]);
-                            console.log("La solution est : " + dataReponses[j]);
-                            if (analyzerResultat.filTest[i][1][j].localeCompare(dataReponses[j]) === 0) {
+                        for (let j = 0; j < reponse[i].length; j++) {
+                            console.log("Vous avez entré " + reponse[i].length + " réponses");
+                            console.log("A comparer : " + reponse[i][j]);
+                            console.log("La solution est : " + analyzerResultat.filTest[i][1][j]);
+                            if (analyzerResultat.filTest[i][1][j].localeCompare(reponse[i][j]) === 0) {
                                 console.log("Vous avez la bonne réponse !");
                             }
                             else{
@@ -656,7 +677,7 @@ program
                     else{  //Plusieurs réponses pour la question
                         let bon = false;
                         for (let j = 0; j < analyzerResultat.filTest[i][1].length; j++) {
-                            if (analyzerResultat.filTest[i][1][j].localeCompare(dataReponses[i]) === 0) {
+                            if (analyzerResultat.filTest[i][1][j].localeCompare(reponse[i][0]) === 0) {
                                 console.log("Vous avez la bonne réponse !");
                                 bon = true;
                             }
