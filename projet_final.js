@@ -9,8 +9,8 @@ const { group } = require('console');
 const path = require("path");
 //const { scaleTypePrecedence } = require('vega-lite/build/src/scale');
 
-//const vg = require('vega');
-//const vegalite = require('vega-lite');
+const vg = require('vega');
+const vegalite = require('vega-lite');
 
 program
     .command('essai', "juste des tests")
@@ -721,65 +721,74 @@ program
                 types[i] = analyzer.filTest[i][2];
             }
 
+            //test avec une liste toute faite
+            //let list=[1,2,1,1,1,3,4,5,1];
 
+            if(/*analyzer.errorCount*/0 === 0){ //l'attibut errorCount sera à creer dans le parser
+
+                //On initialise le compte des différents types à 0.
+                let i = 0;
+                let nbQCM = 0;
+                let nbVF = 0;
+                let nbCORR = 0;
+                let nbMM = 0;
+                let nbNUM = 0;
+                let nbOUV = 0;
+
+                for (i = 0 ; i < 9 /*list.length()*/ ; i++){
+                    switch (types[i]) {
+                        case 1 : nbQCM++; break;
+                        case 2 : nbVF++ ; break;
+                        case 3 : nbCORR++ ; break;
+                        case 4 : nbMM++ ; break;
+                        case 5 : nbNUM++ ; break;
+                        case 6 : nbOUV++ ; break;
+                        default : console.log("Type de question non valide.\n") ; break;
+                    }
+                }
+
+                console.log("On affiche les données : ");
+                console.log(nbQCM);
+                console.log(nbVF);
+                console.log(nbCORR);
+                console.log(nbMM);
+                console.log(nbNUM);
+                console.log(nbOUV);
+
+
+                var profile = {
+                    "data" : {
+                        "values" : [{"Type" : "QCM","Nombre" : nbQCM}, {"Type" : "Vrai-Faux","Nombre" : nbVF}, {"Type" : "Correspondance","Nombre" : nbCORR}, {"Type" : "Mot manquant","Nombre" : nbMM}, {"Type" : "Numérique","Nombre" : nbNUM}, {"Type" : "Ouverte","Nombre" : nbOUV}
+                        ]
+                    },
+                    "mark" : "bar",
+                    "encoding" : {
+                        "x" : {"field" : "Type", "type" : "nominal"},
+                        "y" : {"aggregate" : "average", "field" : "Nombre", "type" : "quantitative",
+                            "axis" : {"title" : "Nombre d'occurrence"}}
+                    }
+                }
+
+
+
+                const myProfile = vegalite.compile(profile).spec;
+
+                /* SVG version */
+                var runtime = vg.parse(myProfile);
+                var view = new vg.View(runtime).renderer('svg').run();
+                var mySvg = view.toSVG();
+                mySvg.then(function(res){
+                    fs.writeFileSync("./Profile.svg", res)
+                    view.finalize();
+                    logger.info("Profil savegardé dans : ./Profile.svg");
+                });
+
+            }else{
+                logger.info("The .vpf file contains error".red);
+            }
         })
 
-        //test avec une liste toute faite
-        //let list=[1,2,1,1,1,3,4,5,1];
 
-        if(/*analyzer.errorCount*/0 === 0){ //l'attibut errorCount sera à creer dans le parser
-
-            //On initialise le compte des différents types à 0.
-            let i = 0;
-            let nbQCM = 0;
-            let nbVF = 0;
-            let nbCORR = 0;
-            let nbMM = 0;
-            let nbNUM = 0;
-            let nbOUV = 0;
-
-            for (i = 0 ; i < 9 /*list.length()*/ ; i++){
-                switch (types[i]) {
-                    case 1 : nbQCM++; break;
-                    case 2 : nbVF++ ; break;
-                    case 3 : nbCORR++ ; break;
-                    case 4 : nbMM++ ; break;
-                    case 5 : nbNUM++ ; break;
-                    case 6 : nbOUV++ ; break;
-                    default : console.log("Type de question non valide.\n") ; break;
-                }
-            }
-
-            var profile = {
-                "data" : {
-                    "values" : [{"Type" : "QCM","Nombre" : nbQCM}, {"Type" : "Vrai-Faux","Nombre" : nbVF}, {"Type" : "Correspondance","Nombre" : nbCORR}, {"Type" : "Mot manquant","Nombre" : nbMM}, {"Type" : "Numérique","Nombre" : nbNUM}, {"Type" : "Ouverte","Nombre" : nbOUV}
-                    ]
-                },
-                "mark" : "bar",
-                "encoding" : {
-                    "x" : {"field" : "Type", "type" : "nominal"},
-                    "y" : {"aggregate" : "average", "field" : "Nombre", "type" : "quantitative",
-                        "axis" : {"title" : "Nombre d'occurrence"}}
-                }
-            }
-
-
-
-            const myProfile = vegalite.compile(profile).spec;
-
-            /* SVG version */
-            var runtime = vg.parse(myProfile);
-            var view = new vg.View(runtime).renderer('svg').run();
-            var mySvg = view.toSVG();
-            mySvg.then(function(res){
-                fs.writeFileSync("./Profile.svg", res)
-                view.finalize();
-                logger.info("Profil savegardé dans : ./Profile.svg");
-            });
-
-        }else{
-            logger.info("The .vpf file contains error".red);
-        }
 
     })
 
@@ -808,151 +817,162 @@ program
             for(let i=0 ; i < analyzer.filTest.length ; i++){
                 tabExamenExtrait[i] = analyzer.filTest[i][3];
             }
+            //test avec une liste toute faite :
+            //let list=[1,2,1,1,1,3,4,5,1];
+            if(/*analyzer.errorCount*/0 === 0) { //l'attibut errorCount sera à creer dans le parser
 
+                //On initialise le compte des différents types à 0.
+                let i = 0;
+                let nbQCMExamen = 0;
+                let nbVFExamen = 0;
+                let nbCORRExamen = 0;
+                let nbMMExamen = 0;
+                let nbNUMExamen = 0;
+                let nbOUVExamen = 0;
 
-        })
-        //test avec une liste toute faite :
-        //let list=[1,2,1,1,1,3,4,5,1];
-        if(/*analyzer.errorCount*/0 === 0) { //l'attibut errorCount sera à creer dans le parser
-
-            //On initialise le compte des différents types à 0.
-            let i = 0;
-            let nbQCMExamen = 0;
-            let nbVFExamen = 0;
-            let nbCORRExamen = 0;
-            let nbMMExamen = 0;
-            let nbNUMExamen = 0;
-            let nbOUVExamen = 0;
-
-            for (i = 0; i < tabExamenExtrait.length; i++) {
-                switch (tabExamenExtrait[i]) {
-                    case 1 :
-                        nbQCMExamen++;
-                        break;
-                    case 2 :
-                        nbVFExamen++;
-                        break;
-                    case 3 :
-                        nbCORRExamen++;
-                        break;
-                    case 4 :
-                        nbMMExamen++;
-                        break;
-                    case 5 :
-                        nbNUMExamen++;
-                        break;
-                    case 6 :
-                        nbOUVExamen++;
-                        break;
-                    default :
-                        console.log("Type de question non valide.\n");
-                        break;
-                }
-            }
-
-            //On crée un tableau à 2 dimensions, contenant les listes des types de tous les fichiers
-            //ex : on a 3 fichiers de la banque en entrée : [[1,1,5,3,2],[1],[4,4,4]]
-            //Pour créer un tableau à 2 dimensions, on doit avoir les memes dimensions de listes ; on complete avec des 0
-            //ex : [[1,1,5,3,2],[1,0,0,0,0],[4,4,4,0,0]]
-
-            let nbFichiers = prompt("Combien de fichiers voulez-vous comparer au fichier examen ?\n");
-            let matrice;//la matrice qui va contenir tous les tableaux de type de toutes les questions
-
-            for (i = 0 ; i < nbFichiers ; i++){
-
-                let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question : ");
-                fs.readFile(path, 'utf8', function (err,data) {
-                    if (err) {
-                        return logger.warn(err);
-                    }
-                    //appel du parser avec analyzer sur le premier fichier
-                    let parseur = new VpfParser();
-                    parseur.test(data);
-
-                    //Extraction des types de questions, sous forme d'un tableau à 1 dimension
-                    for(let j=0 ; j < parseur.filTest.length ; j++){
-                        matrice[i][j] = parseur.filTest[j][3];
-                    }
-
-                })
-            }
-
-            let j = 0;
-            let k = 0;
-            let nbQCMBanque = 0;
-            let nbVFBanque = 0;
-            let nbCORRBanque = 0;
-            let nbMMBanque = 0;
-            let nbNUMBanque = 0;
-            let nbOUVBanque = 0;
-
-            for(j = 0 ; j <matrice.length ; j++){
-                for(k = 0 ; k < matrice[j].length ; k++){
-                    switch(Matrice[j][k]){
-                        case 0 : break;
+                for (i = 0; i < tabExamenExtrait.length; i++) {
+                    switch (tabExamenExtrait[i]) {
                         case 1 :
-                            nbQCMBanque++;
+                            nbQCMExamen++;
                             break;
                         case 2 :
-                            nbVFBanque++;
+                            nbVFExamen++;
                             break;
                         case 3 :
-                            nbCORRBanque++;
+                            nbCORRExamen++;
                             break;
                         case 4 :
-                            nbMMBanque++;
+                            nbMMExamen++;
                             break;
                         case 5 :
-                            nbNUMBanque++;
+                            nbNUMExamen++;
                             break;
                         case 6 :
-                            nbOUVBanque++;
+                            nbOUVExamen++;
                             break;
                         default :
                             console.log("Type de question non valide.\n");
                             break;
                     }
                 }
-            }
 
-            //puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
-            nbQCMBanque /= nbFichiers;
-            nbVFBanque /= nbFichiers;
-            nbCORRBanque /= nbFichiers;
-            nbMMBanque /= nbFichiers;
-            nbNUMBanque /= nbFichiers;
-            nbOUVBanque /= nbFichiers;
+                //On crée un tableau à 2 dimensions, contenant les listes des types de tous les fichiers
+                //ex : on a 3 fichiers de la banque en entrée : [[1,1,5,3,2],[1],[4,4,4]]
+                //Pour créer un tableau à 2 dimensions, on doit avoir les memes dimensions de listes ; on complete avec des 0
+                //ex : [[1,1,5,3,2],[1,0,0,0,0],[4,4,4,0,0]]
 
-            let comparaison = {
-                "data": {
-                    "values": [
-                        {"fichier": "Examen", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMExamen, nbVFExamen,nbCORRExamen,nbMMExamen,nbNUMExamen,nbOUVExamen]},
-                        {"fichier": "Banque", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMBanque, nbVFBanque,nbCORRBanque,nbMMBanque,nbNUMBanque,nbOUVBanque]}
-                    ]
-                },
-                "transform": [{"flatten": ["type", "nombre"]}],
-                "mark": "bar",
-                "encoding": {
-                    "x": {"field": "type", "type": "nominal"},
-                    "y": {"field": "nombre", "type": "quantitative"},
-                    "color": {"field": "fichier", "type": "nominal"}
+                let nbFichiers = prompt("Combien de fichiers voulez-vous comparer au fichier examen ?\n");
+                let matrice = new Array(nbFichiers); //la matrice qui va contenir tous les tableaux de type de toutes les questions
+
+                for (i = 0 ; i < nbFichiers ; i++){
+
+                    let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question : ");
+                    fs.readFile(path, 'utf8', function (err,data) {
+                        if (err) {
+                            return logger.warn(err);
+                        }
+                        //appel du parser avec analyzer sur le premier fichier
+                        let parseur = new VpfParser();
+                        parseur.test(data);
+
+                        matrice[i] = new Array(parseur.filTest.length);
+                        //Extraction des types de questions, sous forme d'un tableau à 1 dimension
+                        for(let j=0 ; j < parseur.filTest.length ; j++){
+                            matrice[i][j] = parseur.filTest[j][2];
+                        }
+
+                    })
                 }
+
+                let j = 0;
+                let k = 0;
+                let nbQCMBanque = 0;
+                let nbVFBanque = 0;
+                let nbCORRBanque = 0;
+                let nbMMBanque = 0;
+                let nbNUMBanque = 0;
+                let nbOUVBanque = 0;
+
+                console.log("La taille de la matrice est : " + matrice.length);
+
+                for(j = 0 ; j <matrice.length ; j++){
+                    console.log("Le nombre de 2ème dimension est : " + matrice[j].length);
+                    for(k = 0 ; k < matrice[j].length ; k++){
+                        switch(matrice[j][k]){
+                            case 0 : break;
+                            case 1 :
+                                nbQCMBanque++;
+                                break;
+                            case 2 :
+                                nbVFBanque++;
+                                break;
+                            case 3 :
+                                nbCORRBanque++;
+                                break;
+                            case 4 :
+                                nbMMBanque++;
+                                break;
+                            case 5 :
+                                nbNUMBanque++;
+                                break;
+                            case 6 :
+                                nbOUVBanque++;
+                                break;
+                            default :
+                                console.log("Type de question non valide.\n");
+                                break;
+                        }
+                    }
+                }
+
+                //puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
+                nbQCMBanque /= nbFichiers;
+                nbVFBanque /= nbFichiers;
+                nbCORRBanque /= nbFichiers;
+                nbMMBanque /= nbFichiers;
+                nbNUMBanque /= nbFichiers;
+                nbOUVBanque /= nbFichiers;
+
+                console.log("Les données sont : ");
+                console.log(nbQCMBanque);
+                console.log(nbVFBanque);
+                console.log(nbCORRBanque);
+                console.log(nbMMBanque);
+                console.log(nbNUMBanque);
+                console.log(nbOUVBanque);
+
+
+                let comparaison = {
+                    "data": {
+                        "values": [
+                            {"fichier": "Examen", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMExamen, nbVFExamen,nbCORRExamen,nbMMExamen,nbNUMExamen,nbOUVExamen]},
+                            {"fichier": "Banque", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMBanque, nbVFBanque,nbCORRBanque,nbMMBanque,nbNUMBanque,nbOUVBanque]}
+                        ]
+                    },
+                    "transform": [{"flatten": ["type", "nombre"]}],
+                    "mark": "bar",
+                    "encoding": {
+                        "x": {"field": "type", "type": "nominal"},
+                        "y": {"field": "nombre", "type": "quantitative"},
+                        "color": {"field": "fichier", "type": "nominal"}
+                    }
+                }
+
+                const maComparaison = vegalite.compile(comparaison).spec;
+
+                /* SVG version */
+                var runtime = vg.parse(maComparaison);
+                var view = new vg.View(runtime).renderer('svg').run();
+                var mySvg = view.toSVG();
+                mySvg.then(function(res){
+                    fs.writeFileSync("./ProfilComparaison.svg", res)
+                    view.finalize();
+                    console.log("Profil sauvegardé dans : ./ProfilComparaison.svg");
+                });
             }
-
-            const maComparaison = vegalite.compile(comparaison).spec;
-
-            /* SVG version */
-            var runtime = vg.parse(maComparaison);
-            var view = new vg.View(runtime).renderer('svg').run();
-            var mySvg = view.toSVG();
-            mySvg.then(function(res){
-                fs.writeFileSync("./ProfilComparaison.svg", res)
-                view.finalize();
-                logger.info("Profil savegardé dans : ./ProfilComparaison.svg");
-            });
-
-        }
+        })
     })
+
 type: module;
 program.run()
 
