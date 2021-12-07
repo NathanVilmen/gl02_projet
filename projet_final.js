@@ -205,23 +205,33 @@ program
             //on écrit l'énoncé et la question qui lui correspond
             //Si l'énoncé est égale à -1--> il n'y a pas d'énoncé à cette question donc on affiche pas l'énoncé
             if(numEnonce===(-1)){
-                var data=analyzer.question[numQ];
-                data=data.toString();
-                fs.appendFile(pathNewFile, data, function (err) {
-                    if (err) return console.log(err);
-                });
+                if(analyzer.question[numQ]==null){
+                    logger.info("Cette question n'existe pas !");
+                }
+                else{
+                    var data=analyzer.question[numQ];
+                    data=data.toString();
+                    fs.appendFile(pathNewFile, data, function (err) {
+                        if (err) return console.log(err);
+                    });
+                }
             }
             else{
-                var data=analyzer.enonce[numEnonce];
-                var data2=analyzer.question[numEnonce][numQ];
-                data=data.toString();
-                data2=data2.toString();
-                fs.appendFile(pathNewFile, data, function (err) {
-                    if (err) return console.log(err);
-                });
-                fs.appendFile(pathNewFile, data2, function (err) {
-                    if (err) return console.log(err);
-                });
+                if(analyzer.question[numEnonce][numQ]==null){
+                    logger.info("Cette question n'existe pas !");
+                }
+                else{
+                    var data=analyzer.enonce[numEnonce];
+                    var data2=analyzer.question[numEnonce][numQ];
+                    data=data.toString();
+                    data2=data2.toString();
+                    fs.appendFile(pathNewFile, data, function (err) {
+                        if (err) return console.log(err);
+                    });
+                    fs.appendFile(pathNewFile, data2, function (err) {
+                        if (err) return console.log(err);
+                    });
+                }
             }
 
         })
@@ -529,7 +539,6 @@ program
     .argument("<file>", "C'est le chemin du fichier à tester")
     .action(({args,logger}) => {
 
-        var path="./SujetB_data/EM-U4-p32_33-Review.gift";
         fs.readFile(path, 'utf8', function (err,data) {
             if (err) {
                 return logger.warn(err);

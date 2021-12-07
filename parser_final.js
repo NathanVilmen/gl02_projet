@@ -335,7 +335,7 @@ VpfParser.prototype.TypeQuestion = function(data,numero){
             correspondance=3;
             console.log("C'est une correspondance");
         }
-        //Il reste que question libre -->on renvoie 6
+        //Question libre -->on renvoie 6
         else if(EnonceParsed.length===0){
             correspondance=6;
             console.log("C'est une question ouverte");
@@ -346,19 +346,18 @@ VpfParser.prototype.TypeQuestion = function(data,numero){
             correspondance=1;
             console.log("C'est un MC");
         }
-            //S'il contient true ou false c'est un type vrai/faux --> on renvoie 2
-        //| 'TRUE'|'T'|'FALSE'
-        else if((EnonceParsed.includes('F') || EnonceParsed.includes('T') || EnonceParsed.includes('TRUE')) || (EnonceParsed.includes('FALSE')) && (!EnonceParsed.includes('='))){
-            correspondance=2;
-            console.log("C'est un vrai/faux");
-        }
         //S'il contient qu'un "=" et pas de "~" il y a un choix donc c'est un mot manquant--> on renvoie 4
         else if(EnonceParsed.match(/~/g)== null){
             correspondance=4;
             console.log("C'est un mot manquant");
         }
-            //Il reste que question libre -->on renvoie 6
-            //S'il contient 'digit..digit'|'digit:digit'|'=digit' c'est un type numérique --> on renvoie 5
+        //S'il contient true ou false c'est un type vrai/faux --> on renvoie 2
+        //| 'TRUE'|'T'|'FALSE'
+        else if((EnonceParsed.includes('F') || EnonceParsed.includes('T') || EnonceParsed.includes('TRUE')) || (EnonceParsed.includes('FALSE')) && (!EnonceParsed.includes('='))){
+            correspondance=2;
+            console.log("C'est un vrai/faux");
+        }
+        //S'il contient 'digit..digit'|'digit:digit'|'=digit' c'est un type numérique --> on renvoie 5
         //else if(EnonceParsed.includes('[0-9]..[0-9]'|'[0-9]:[0-9]'|'=[0-9]')){
         else{
             correspondance=5;
