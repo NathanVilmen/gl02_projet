@@ -706,15 +706,18 @@ program
     .argument('<file>', 'Le fichier GIFT à étudier')
     .action(({args, options, logger}) => {
 
-        let types = Array();
-
-        fs.readFile(args.file.toString(), 'utf8', function (err,data) {
-            if (err) {
+        const data = lireFichier(args.file.toString());
+        //fs.readFile(args.file.toString(), 'utf8', function (err,data) {
+            /*if (err) {
                 return logger.warn(err);
-            }
+            }*/
             //appel du parser avec analyzer sur le premier fichier
             let analyzer = new VpfParser();
             analyzer.test(data);
+
+        console.log("Il y a " + analyzer.filTest.length + " questions");
+
+            let types = Array(analyzer.filTest.length);
 
             //Extraction des types de questions, sous forme d'un tableau à 1 dimension
             for(let i=0 ; i < analyzer.filTest.length ; i++){
@@ -735,7 +738,7 @@ program
                 let nbNUM = 0;
                 let nbOUV = 0;
 
-                for (i = 0 ; i < 9 /*list.length()*/ ; i++){
+                for (i = 0 ; /*i < 9*/ /*list.length()*/ i < types.length; i++){
                     switch (types[i]) {
                         case 1 : nbQCM++; break;
                         case 2 : nbVF++ ; break;
@@ -785,7 +788,7 @@ program
             }else{
                 logger.info("The .vpf file contains error".red);
             }
-        })
+        //})
 
 
 
