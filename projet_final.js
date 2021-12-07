@@ -747,14 +747,13 @@ program
                     }
                 }
 
-                console.log("On affiche les données : ");
+                /*console.log("On affiche les données : ");
                 console.log(nbQCM);
                 console.log(nbVF);
                 console.log(nbCORR);
                 console.log(nbMM);
                 console.log(nbNUM);
-                console.log(nbOUV);
-
+                console.log(nbOUV);*/
 
                 var profile = {
                     "data" : {
@@ -925,14 +924,6 @@ program
                     }
                 }
 
-                //puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
-                nbQCMBanque /= nbFichiers;
-                nbVFBanque /= nbFichiers;
-                nbCORRBanque /= nbFichiers;
-                nbMMBanque /= nbFichiers;
-                nbNUMBanque /= nbFichiers;
-                nbOUVBanque /= nbFichiers;
-
                 console.log("Les données sont : ");
                 console.log(nbQCMBanque);
                 console.log(nbVFBanque);
@@ -941,6 +932,13 @@ program
                 console.log(nbNUMBanque);
                 console.log(nbOUVBanque);
 
+                //puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
+                nbQCMBanque /= nbFichiers;
+                nbVFBanque /= nbFichiers;
+                nbCORRBanque /= nbFichiers;
+                nbMMBanque /= nbFichiers;
+                nbNUMBanque /= nbFichiers;
+                nbOUVBanque /= nbFichiers
 
                 let comparaison = {
                     "data": {
