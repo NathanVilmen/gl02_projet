@@ -151,6 +151,7 @@ VpfParser.prototype.triAffichage = function(data){
         this.filTest[i][1]=this.Reponses(data,i);
         //console.log("Réponse : " + i + " est : " + this.filTest[i][1][0]);
         this.filTest[i][2]=this.TypeQuestion(data,i);
+        this.filTest[i][3]=this.ReponsesPossibles(data, i);
     }
 
     console.log("Le fichier est trié");
@@ -293,6 +294,61 @@ VpfParser.prototype.Reponses = function (question, numero) {
     //Il faut traiter le numéro de la question
     //Askip ça marche pas pour un type de données
     //Il faut enregistrer les réponses dans filTest avec un return
+}
+
+VpfParser.prototype.ReponsesPossibles = function(question,numero){
+
+    let nbReponses = 0;
+    const symboleReponsesProposees = /[=~]/g;
+    let indexReponses;
+    let caractereLu;
+    let reponse;
+
+    if(question[numero].indexOf('{') !== -1){   //C'est une question
+        nbReponses = question[numero].match(symboleReponsesProposees).length;
+        console.log("Il y a " +  nbReponses + " possibles");
+        if(nbReponses !== null) {
+            console.log("On est dans le 1er if");
+            reponse = new Array(nbReponses.length);
+            console.log("Il y a " +  nbReponses + " possibles");
+
+            for (let i = 0; i < nbReponses; i++) {
+                console.log("Passage dans la boucle i");
+                reponse[i] = '';
+                //Premièrement on récupère l'index du premier { pour savoir où sont les réponses possibles
+                if (i === 0) {
+                    let index1 = question[numero].indexOf('=');
+                    let index2 = question[numero].indexOf('~');
+                    indexReponses = Math.min(index1, index2);
+                }
+                else {
+                    let index1 = question[numero].indexOf('=', (indexReponses+1));
+                    let index2 = question[numero].indexOf('~', (indexReponses+1));
+                    indexReponses = Math.min(index1, index2);
+                }
+                //console.log("indexReponses = " + indexReponses);
+                caractereLu = question[numero].charAt(indexReponses + 1);
+                do {
+                    indexReponses++;
+                    caractereLu = question[numero].charAt(indexReponses);
+                    console.log("Possible : Le caractère lu est : " + caractereLu);
+                    //console.log("tilde : " + caractereLu.localeCompare('~'));
+                    //console.log("accolade " + caractereLu.localeCompare('{'));
+
+                    if (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0) {
+                        reponse[i] = reponse[i] + caractereLu;
+
+                        //On supprime les \n de la réponse
+                        reponse[i]=reponse[i].replace(/\n|\r|\t/g, '');
+                    }
+                    console.log("La réponse[" + i + "] est maintenant : " + reponse[i])
+                } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0);
+            }
+        }
+        console.log("Les réponses proposées à la question sont : " + reponse);
+        return reponse;
+    }
+    return null;
 }
 
 VpfParser.prototype.TypeQuestion = function(data,numero){

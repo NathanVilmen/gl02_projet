@@ -623,7 +623,10 @@ program
                 if(analyzerExam.question[i].match(symbole2).length >= 2){  //On a plusieurs questions pour 1 exercice
                     for (let j = 0; j < analyzerResultat.filTest[i][1].length; j++) {
                         if(analyzerResultat.filTest[i][2] === 1){
-                            console.log("Voici les choix possibles : \n" + analyzerResultat.filTest[i][1]);
+                            console.log("Voici les choix possibles :");
+                            for (let k = 0; k < analyzerResultat.filTest[i].length; k++) {
+                                console.log(analyzerResultat.filTest[i][3][k]);
+                            }
                         }
                         reponse[i][j] = prompt("Veuillez rentrer votre réponse à la question n°" + j + ", si vous ne voulez rien mettre tapez un \"-\" ");
                         fs.appendFile(pathReponses, reponse[i][j]+'\n', function (err) {
@@ -633,7 +636,10 @@ program
                 }
                 else{   //On a 1 question pour 1 exercice
                     if(analyzerResultat.filTest[i][2] === 1){
-                        console.log("Voici les choix possibles : \n" + analyzerResultat.filTest[i][1]);
+                        console.log("Voici les choix possibles :");
+                        for (let k = 0; k < analyzerResultat.filTest[i].length; k++) {
+                            console.log(analyzerResultat.filTest[i][3][k]);
+                        }
                     }
                     reponse[i][0] = prompt("Veuillez rentrer votre réponse à la question, si vous ne voulez rien mettre tapez un \"-\" ");
                     fs.appendFile(pathReponses, reponse[i][0]+'\n', function (err) {
@@ -685,7 +691,6 @@ program
                     else if(reponse[i].length !== 1){   //1 réponse pour 1 question d’un exercice comportant plusieurs questions, ici il faut tester quand Alexis aura mis à jour le parser EnonceQuestion(), s'il met une question par case on test sur le nombdre de EnonceQuestion
                         //Sinon on doit
                         for (let j = 0; j < reponse[i].length; j++) {
-                            console.log("Vous avez entré " + reponse[i].length + " réponses");
                             console.log("A comparer : " + reponse[i][j]);
                             console.log("La solution est : " + analyzerResultat.filTest[i][1][j]);
                             if (analyzerResultat.filTest[i][1][j].trim().localeCompare(reponse[i][j]) === 0) {
