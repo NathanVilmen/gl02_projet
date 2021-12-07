@@ -17,7 +17,7 @@ program
     //pas d'argument
     .action((logger) => {
 
-        let pathName="./SujetB_data/U2-p22-Gra-Ing_or_inf.gift";
+        let pathName="./SujetB_data/EM-U4-p32_33-Review.gift";
 
         fs.readFile(pathName, 'utf8', function (err,data) {
             if (err) {

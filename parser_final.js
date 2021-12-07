@@ -131,7 +131,6 @@ VpfParser.prototype.triAffichage = function(data){
     } else if (!data[0].includes(separator)) {
         data.shift();
     }
-    console.log("voici la data***************"+data);
 
     for(let i=0;i<data.length;i++){
         
@@ -149,9 +148,9 @@ VpfParser.prototype.triAffichage = function(data){
     for(let i=0;i<this.filTest.length;i++){
         this.filTest[i][0]=this.EnonceQuestion(data,i);
         //console.log("Énoncé de la question : " + this.filTest[i][0]);
-        this.filTest[i][1]=this.Reponses(data,i);
+        //this.filTest[i][1]=this.Reponses(data,i);
         //console.log("Réponse : " + i + " est : " + this.filTest[i][1][0]);
-        this.filTest[i][2]=this.TypeQuestion(data,i);
+        //this.filTest[i][2]=this.TypeQuestion(data,i);
     }
 
     console.log("Le fichier est trié");
@@ -159,7 +158,7 @@ VpfParser.prototype.triAffichage = function(data){
 
 VpfParser.prototype.EnonceQuestion = function(data,numero){
 
-    //console.log("on est dans EnonceQuestion");
+    console.log("on est dans EnonceQuestion");
     var EnonceParsed;
     EnonceParsed=data[numero];
     
@@ -173,11 +172,17 @@ VpfParser.prototype.EnonceQuestion = function(data,numero){
     }
     else{//Si c'est une question --> on retire les réponses et on ajoute __ à la place
         EnonceParsed=EnonceParsed.replace(re,'');
+        EnonceParsed=EnonceParsed.replace(/({)/gi,'ù*{');
+        EnonceParsed=EnonceParsed.split('ù*');
+        
         //Ca enlève toutes les réponses
-        EnonceParsed=EnonceParsed.replace(/{[\s\S]*}/,"_");
+        for(let i=0;i<EnonceParsed.length;i++){
+            
+            EnonceParsed[i]=EnonceParsed[i].replace(/{[\s\S]*}/,"_");
+        }   
     }
 
-    console.log("Dans EnonceQuestion on a EnonceParsed = " + EnonceParsed);
+    console.log("Dans EnonceQuestion:" + EnonceParsed);
     return EnonceParsed;
 }
 
