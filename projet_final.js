@@ -800,14 +800,15 @@ program
 
         let tabExamenExtrait = Array();
 
-        fs.readFile(args.file.toString(), 'utf8', function (err,data) {
-            if (err) {
+        const dataExam = lireFichier(args.file.toString());
+        //fs.readFile(args.file.toString(), 'utf8', function (err,data) {
+            /*if (err) {
                 return logger.warn(err);
-            }
+            }*/
 
             //appel du parser avec analyzer sur le premier fichier
             let analyzer = new VpfParser();
-            analyzer.test(data);
+            analyzer.test(dataExam);
 
             //Extraction des types de questions, sous forme d'un tableau à 1 dimension
             for(let i=0 ; i < analyzer.filTest.length ; i++){
@@ -871,9 +872,9 @@ program
                     let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question : ");
                     let data = lireFichier(path);
                     //fs.readFile(path, 'utf8', function (err,data) {
-                    if (err) {
-                        return logger.warn(err);
-                    }
+                    // if (err) {
+                    //     return logger.warn(err);
+                    // }
                     //appel du parser avec analyzer sur le premier fichier
                     let parseur = new VpfParser();
                     parseur.test(data);
@@ -931,13 +932,13 @@ program
                 console.log(nbNUMBanque);
                 console.log(nbOUVBanque);
 
-                //puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
+                /*//puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
                 nbQCMBanque /= nbFichiers;
                 nbVFBanque /= nbFichiers;
                 nbCORRBanque /= nbFichiers;
                 nbMMBanque /= nbFichiers;
                 nbNUMBanque /= nbFichiers;
-                nbOUVBanque /= nbFichiers;
+                nbOUVBanque /= nbFichiers;*/
 
                 let comparaison = {
                     "data": {
@@ -967,7 +968,7 @@ program
                     console.log("Profil sauvegardé dans : ./ProfilComparaison.svg");
                 });
             }
-        })
+        //})
     })
 
 type: module;
