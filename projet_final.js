@@ -200,9 +200,7 @@ program
             var pathNewFile=nomF+'.gift';
 
             var analyzer=new VpfParser();
-            analyzer.parse(data)
-
-            console.log("Voici la question:"+analyzer.question[numEnonce][numQ]);
+            analyzer.parse(data);
 
             //on écrit l'énoncé et la question qui lui correspond
             //Si l'énoncé est égale à -1--> il n'y a pas d'énoncé à cette question donc on affiche pas l'énoncé
@@ -293,6 +291,7 @@ program
 
         //Tableau qui contient les caractéristiques de recherche
         var recherche=new Array();
+        var FichierCorrespondant=new Array();
 
         for (let i = 0; i < 47; i++) {
             let path = myMap.get(i);
@@ -305,16 +304,32 @@ program
                     //On affiche le fichier
                     console.log("Le fichier numéro " + i + " correspond à vos recherches");
 
-                    
+                    //On stock les fichiers correspondant dans un tableau
+                    FichierCorrespondant.push(i);
+                    console.log("taille: "+FichierCorrespondant.length);
+                }
+            })
+        }
+        setTimeout(function() {
+            console.log("WEWEWEW"+FichierCorrespondant);
+            for(let i=0;i<FichierCorrespondant.length;i++){
+
+                let path = myMap.get(FichierCorrespondant[i]);
+                //console.log("Le path est : " + path);
+                fs.readFile(path, 'utf8', function (err,data){
+                    if (err) {
+                        return logger.warn(err)
+                    }
+    
                     //On parse le fichier
                     let analyzer=new VpfParser();
                     analyzer.parse(data);
-
+    
                     //console.log("Voici this.Question "+analyzer.question);
                     console.log("taille enonce"+analyzer.enonce.length);
                     
                     if(analyzer.enonce.length>=2){
-
+    
                         //On a les énoncés associés à toutes les questions
                         //On vérifie quels énoncés contiennent ce mot
                         for(let k=0;k<analyzer.enonce.length;k++){
@@ -328,7 +343,7 @@ program
                                         console.log(analyzer.question[0][y]);
     
                                         console.log("Cette question correspond");
-                                        console.log("Numéro de fichier: "+i);
+                                        console.log("Numéro de fichier: "+FichierCorrespondant[i]);
                                         console.log("Numéro d'énoncés: "+0);
                                         console.log("Numéro de question: "+y);
                                     }
@@ -338,9 +353,9 @@ program
                                 for(let y=0;y<analyzer.question[k].length;y++){
                                     console.log("Choississez le numéro de question"+y+" si vous voulez cette question");
                                     console.log(analyzer.question[k][y]);
-
+    
                                     console.log("Cette question correspond");
-                                    console.log("Numéro de fichier: "+i);
+                                    console.log("Numéro de fichier: "+FichierCorrespondant[i]);
                                     console.log("Numéro d'énoncé: "+k);
                                     console.log("Numéro de questions: "+y);                                 
                                 }
@@ -350,11 +365,11 @@ program
                             else{
                                 for(let y=0;y<analyzer.question[k].length;y++){
                                     if(analyzer.question[k][y].includes(typeExercice)){
-        
+    
                                         console.log(analyzer.question[k][y]);
-        
+    
                                         console.log("Cette question correspond");
-                                        console.log("Numéro de fichier: "+i);
+                                        console.log("Numéro de fichier: "+FichierCorrespondant[i]);
                                         console.log("Numéro d'énoncé: "+k);
                                         console.log("Numéro de question: "+y); 
                                     }  
@@ -364,22 +379,23 @@ program
                     }
                     //Il n'y a pas d'énoncé
                     else{
-                        console.log("on est là");
                         for(let y=0;y<analyzer.question.length;y++){
-                            if(analyzer.question[y].includestypeExercice.toLowerCase()()){
-
+                            if(analyzer.question[y].includes(typeExercice)){
+    
                                 console.log(analyzer.question[y]);
-
+    
                                 console.log("Cette question correspond");
-                                console.log("Numéro de fichier: "+i);
+                                console.log("Numéro de fichier: "+FichierCorrespondant[i]);
                                 console.log("Numéro d'énoncé: "+(-1));
                                 console.log("Numéro de question: "+y); 
                             }  
                         }
-                    }      
-                }
-            })
-        }
+                    }  
+                })    
+            }
+        
+    
+        }, 1000);     
     })
 
     /////////############# SPEC 4
