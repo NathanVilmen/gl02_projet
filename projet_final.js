@@ -624,8 +624,10 @@ program
                     for (let j = 0; j < analyzerResultat.filTest[i][1].length; j++) {
                         if(analyzerResultat.filTest[i][2] === 1){
                             console.log("Voici les choix possibles :");
-                            for (let k = 0; k < analyzerResultat.filTest[i].length; k++) {
-                                console.log(analyzerResultat.filTest[i][3][k]);
+                            for (let k = 0; k < analyzerResultat.filTest[i][3].length; k++) {
+                                if(analyzerResultat.filTest[i][3][k].localeCompare('') !== 0) {
+                                    console.log(analyzerResultat.filTest[i][3][k]);
+                                }
                             }
                         }
                         reponse[i][j] = prompt("Veuillez rentrer votre réponse à la question n°" + j + ", si vous ne voulez rien mettre tapez un \"-\" ");
@@ -637,8 +639,10 @@ program
                 else{   //On a 1 question pour 1 exercice
                     if(analyzerResultat.filTest[i][2] === 1){
                         console.log("Voici les choix possibles :");
-                        for (let k = 0; k < analyzerResultat.filTest[i].length; k++) {
-                            console.log(analyzerResultat.filTest[i][3][k]);
+                        for (let k = 0; k < analyzerResultat.filTest[i][3].length; k++) {
+                            if(analyzerResultat.filTest[i][3][k].localeCompare('') !== 0){
+                                console.log(analyzerResultat.filTest[i][3][k]);
+                            }
                         }
                     }
                     reponse[i][0] = prompt("Veuillez rentrer votre réponse à la question, si vous ne voulez rien mettre tapez un \"-\" ");
@@ -718,7 +722,7 @@ program
                         }
                     }
                 }
-                console.log("Au final, sur " + analyzerExam.question.length + " exercices, vous avez fait " + nbErreurs + " erreurs");
+                console.log("Au final, sur " + analyzerExam.question.length + " exercice(s), vous avez fait " + nbErreurs + " erreurs");
 
                 //On affiche l'énoncé et les questions en rapport avec l'énoncé
                 //On affiche ensuite les réponses possibles

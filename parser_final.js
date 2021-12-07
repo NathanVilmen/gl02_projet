@@ -299,6 +299,7 @@ VpfParser.prototype.Reponses = function (question, numero) {
 VpfParser.prototype.ReponsesPossibles = function(question,numero){
 
     let nbReponses = 0;
+    let nbReponsesJustes = 0;
     const symboleReponsesProposees = /[=~]/g;
     let indexReponses;
     let caractereLu;
@@ -312,19 +313,25 @@ VpfParser.prototype.ReponsesPossibles = function(question,numero){
             reponse = new Array(nbReponses.length);
             console.log("Il y a " +  nbReponses + " possibles");
 
-            for (let i = 0; i < nbReponses; i++) {
-                console.log("Passage dans la boucle i");
+
+            //Lire le nombre de '='
+            nbReponsesJustes = question[numero].match(/=/g).length;
+            //Un premier for avec nbReponses - le nombre de =
+                //On lit seulement les '~'
+            //Un deuxième for avec le nombre de =
+                //On lit seulement les '='
+                //On ajoute aux autre réponses trouvés précédemment
+            //On retourne le tableau de réponse
+
+            for (let i = 0; i < (nbReponses-nbReponsesJustes); i++) {  //On lit les mauvais réponses : '~'
+                console.log("Passage dans la boucle des ~");
                 reponse[i] = '';
                 //Premièrement on récupère l'index du premier { pour savoir où sont les réponses possibles
                 if (i === 0) {
-                    let index1 = question[numero].indexOf('=');
-                    let index2 = question[numero].indexOf('~');
-                    indexReponses = Math.min(index1, index2);
+                    indexReponses = question[numero].indexOf('~');
                 }
                 else {
-                    let index1 = question[numero].indexOf('=', (indexReponses+1));
-                    let index2 = question[numero].indexOf('~', (indexReponses+1));
-                    indexReponses = Math.min(index1, index2);
+                    indexReponses = question[numero].indexOf('~', indexReponses);
                 }
                 //console.log("indexReponses = " + indexReponses);
                 caractereLu = question[numero].charAt(indexReponses + 1);
@@ -344,6 +351,34 @@ VpfParser.prototype.ReponsesPossibles = function(question,numero){
                     console.log("La réponse[" + i + "] est maintenant : " + reponse[i])
                 } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0);
             }
+
+            //On lit les bonnes réponses : '='
+            for (let i = (nbReponses-nbReponsesJustes); i < nbReponses; i++) {
+                console.log("On est dans la boucle des =");
+                reponse[i] = '';
+                //Premièrement on récupère l'index du premier { pour savoir où sont les réponses possibles
+                if (i === (nbReponses-nbReponsesJustes)) {
+                    indexReponses = question[numero].indexOf('=');
+                }
+                else {
+                    indexReponses = question[numero].indexOf('=', indexReponses);
+                }
+                caractereLu = question[numero].charAt(indexReponses + 1);
+                do {
+                    indexReponses++;
+                    caractereLu = question[numero].charAt(indexReponses);
+                    console.log("Possible : Le caractère lu est : " + caractereLu);
+
+                    if (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0) {
+                        reponse[i] = reponse[i] + caractereLu;
+
+                        //On supprime les \n de la réponse
+                        reponse[i]=reponse[i].replace(/\n|\r|\t/g, '');
+                    }
+                    console.log("La réponse[" + i + "] est maintenant : " + reponse[i])
+                } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0);
+            }
+
         }
         console.log("Les réponses proposées à la question sont : " + reponse);
         return reponse;
