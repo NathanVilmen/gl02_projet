@@ -814,30 +814,27 @@ program
     .argument('<file>', 'Le fichier Examen à étudier')
     .action(({args,logger}) => {
 
-        let tabExamen;
         let tabExamenExtrait = Array();
 
-        fs.readFile(args.file.toString(), 'utf8', function (err,data) {
-            if (err) {
+        const dataExam = lireFichier(args.file.toString());
+        //fs.readFile(args.file.toString(), 'utf8', function (err,data) {
+            /*if (err) {
                 return logger.warn(err);
-            }
+            }*/
+
             //appel du parser avec analyzer sur le premier fichier
             let analyzer = new VpfParser();
-            analyzer.test(data);
-
-            //stockage du retour de la donnée parsée, sous forme d'un tableau à 2 dimensions
-            tabExamen = analyzer.filTest;
+            analyzer.test(dataExam);
 
             //Extraction des types de questions, sous forme d'un tableau à 1 dimension
             for(let i=0 ; i < analyzer.filTest.length ; i++){
-                tabExamenExtrait[i] = analyzer.filTest[i][3];
+                tabExamenExtrait[i] = analyzer.filTest[i][2];
             }
             //test avec une liste toute faite :
             //let list=[1,2,1,1,1,3,4,5,1];
             if(/*analyzer.errorCount*/0 === 0) { //l'attibut errorCount sera à creer dans le parser
 
                 //On initialise le compte des différents types à 0.
-                let i = 0;
                 let nbQCMExamen = 0;
                 let nbVFExamen = 0;
                 let nbCORRExamen = 0;
@@ -876,31 +873,9 @@ program
                 //Pour créer un tableau à 2 dimensions, on doit avoir les memes dimensions de listes ; on complete avec des 0
                 //ex : [[1,1,5,3,2],[1,0,0,0,0],[4,4,4,0,0]]
 
-                let nbFichiers = prompt("Combien de fichiers voulez-vous comparer au fichier examen ?\n");
+                let nbFichiers = prompt("Combien de fichiers voulez-vous comparer au fichier examen ?");
                 let matrice = new Array(nbFichiers); //la matrice qui va contenir tous les tableaux de type de toutes les questions
 
-                for (i = 0 ; i < nbFichiers ; i++){
-
-                    let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question : ");
-                    fs.readFile(path, 'utf8', function (err,data) {
-                        if (err) {
-                            return logger.warn(err);
-                        }
-                        //appel du parser avec analyzer sur le premier fichier
-                        let parseur = new VpfParser();
-                        parseur.test(data);
-
-                        matrice[i] = new Array(parseur.filTest.length);
-                        //Extraction des types de questions, sous forme d'un tableau à 1 dimension
-                        for(let j=0 ; j < parseur.filTest.length ; j++){
-                            matrice[i][j] = parseur.filTest[j][2];
-                        }
-
-                    })
-                }
-
-                let j = 0;
-                let k = 0;
                 let nbQCMBanque = 0;
                 let nbVFBanque = 0;
                 let nbCORRBanque = 0;
@@ -908,12 +883,22 @@ program
                 let nbNUMBanque = 0;
                 let nbOUVBanque = 0;
 
-                console.log("La taille de la matrice est : " + matrice.length);
+                for (let i = 0 ; i < nbFichiers ; i++){
 
-                for(j = 0 ; j <matrice.length ; j++){
-                    console.log("Le nombre de 2ème dimension est : " + matrice[j].length);
-                    for(k = 0 ; k < matrice[j].length ; k++){
-                        switch(matrice[j][k]){
+                    let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question : ");
+                    let data = lireFichier(path);
+                    //fs.readFile(path, 'utf8', function (err,data) {
+                    // if (err) {
+                    //     return logger.warn(err);
+                    // }
+                    //appel du parser avec analyzer sur le premier fichier
+                    let parseur = new VpfParser();
+                    parseur.test(data);
+
+                    matrice[i] = new Array(parseur.filTest.length);
+                    //Extraction des types de questions, sous forme d'un tableau à 1 dimension
+                    for(let j=0 ; j < parseur.filTest.length ; j++){
+                        switch(parseur.filTest[j][2]){
                             case 0 : break;
                             case 1 :
                                 nbQCMBanque++;
@@ -938,6 +923,21 @@ program
                                 break;
                         }
                     }
+                    console.log("Les données du fichier sont : ");
+                    console.log(nbQCMBanque);
+                    console.log(nbVFBanque);
+                    console.log(nbCORRBanque);
+                    console.log(nbMMBanque);
+                    console.log(nbNUMBanque);
+                    console.log(nbOUVBanque);
+
+                    /*//puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
+                    nbQCMBanque /= nbFichiers;
+                    nbVFBanque /= nbFichiers;
+                    nbCORRBanque /= nbFichiers;
+                    nbMMBanque /= nbFichiers;
+                    nbNUMBanque /= nbFichiers;
+                    nbOUVBanque /= nbFichiers;*/
                 }
 
                 console.log("Les données sont : ");
@@ -948,13 +948,13 @@ program
                 console.log(nbNUMBanque);
                 console.log(nbOUVBanque);
 
-                //puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
+                /*//puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
                 nbQCMBanque /= nbFichiers;
                 nbVFBanque /= nbFichiers;
                 nbCORRBanque /= nbFichiers;
                 nbMMBanque /= nbFichiers;
                 nbNUMBanque /= nbFichiers;
-                nbOUVBanque /= nbFichiers
+                nbOUVBanque /= nbFichiers;*/
 
                 let comparaison = {
                     "data": {
@@ -984,9 +984,14 @@ program
                     console.log("Profil sauvegardé dans : ./ProfilComparaison.svg");
                 });
             }
-        })
+        //})
     })
 
 type: module;
+
+function lireFichier(path){
+    let fichier = fs.readFileSync(path, 'utf8');
+    return fichier;
+}
 program.run()
 

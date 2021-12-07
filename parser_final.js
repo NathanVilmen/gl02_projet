@@ -148,9 +148,9 @@ VpfParser.prototype.triAffichage = function(data){
     for(let i=0;i<this.filTest.length;i++){
         this.filTest[i][0]=this.EnonceQuestion(data,i);
         //console.log("Énoncé de la question : " + this.filTest[i][0]);
-        //this.filTest[i][1]=this.Reponses(data,i);
+        this.filTest[i][1]=this.Reponses(data,i);
         //console.log("Réponse : " + i + " est : " + this.filTest[i][1][0]);
-        //this.filTest[i][2]=this.TypeQuestion(data,i);
+        this.filTest[i][2]=this.TypeQuestion(data,i);
     }
 
     console.log("Le fichier est trié");
@@ -341,7 +341,8 @@ VpfParser.prototype.TypeQuestion = function(data,numero){
             console.log("C'est une question ouverte");
         }
         //S'il contient plusieurs "~"  il y a plusieurs choix donc c'est un MC--> on renvoie 1
-        else if(EnonceParsed.match(/~/g)!== null && EnonceParsed.match(/~/g).length>1){
+            //@Alexis je pense que même si on a un "~" ça peut être un MC quand même
+        else if(EnonceParsed.match(/~/g)!== null && EnonceParsed.match(/~/g).length>=1){
             correspondance=1;
             console.log("C'est un MC");
         }
