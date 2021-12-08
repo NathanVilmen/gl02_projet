@@ -42,6 +42,17 @@ program
     //pas d'argument
     .action((logger) => {
 
+        var VCard=function(){
+            this.N;
+            this.FN;
+            this.typeEmail;
+            this.email;
+            this.typeTel;
+            this.tel;
+        }
+        //Création de l'objet
+        var card=new VCard();
+
         function isNumber(n) {
             return /^-?[\d.]+(?:e-?\d+)?$/.test(n);
         }
@@ -51,17 +62,17 @@ program
         }
 
 
-        let N = prompt("Enter a last name (nom de famille) in lowercases : ");
+        card.N = prompt("Enter a last name (nom de famille) in lowercases : ");
 
         //check d'erreur : si ce n'est pas un string, ou qu'il contient un ou plusieurs chiffres
-        while (!isString(N) || N.match(/\d+/g) !== null){
-            N = prompt("Wrong input. Enter a last name (nom de famille) in lowercases : ");
+        while (!isString(card.N) || card.N.match(/\d+/g) !== null){
+            card.N = prompt("Wrong input. Enter a last name (nom de famille) in lowercases : ");
         }
 
-        let FN = prompt("Enter a first name (prenom) in lowercases : ");
+        card.FN = prompt("Enter a first name (prenom) in lowercases : ");
 
-        while (!isString(FN) || FN.match(/\d+/g) !== null){
-            FN = prompt("Wrong input. Enter a first name (prenom) in lowercases : ");
+        while (!isString(card.FN) || card.FN.match(/\d+/g) !== null){
+            card.FN = prompt("Wrong input. Enter a first name (prenom) in lowercases : ");
         }
 
         //on crée/append un autre fichier, qui contient la liste des noms de tous ceux qui ont
@@ -77,28 +88,28 @@ program
             if (err) {
                 return logger.warn(err);
             }
-            if (data.includes(N+' '+FN)) {
+            if (data.includes(card.N+' '+card.FN)) {
                 console.log("Contact déjà existant.\n");
             } else {
 
                 //on demande les infos
-                let typeEmail = prompt("Before entering the email : Is it a HOME mail or a WORK mail(type in uppercases)? ");
-                while (typeEmail !== 'HOME' && typeEmail !== 'WORK'){
-                    typeEmail = prompt("Wrong input. Is it a HOME mail or a WORK mail(type in uppercases)? ");
+                card.typeEmail = prompt("Before entering the email : Is it a HOME mail or a WORK mail(type in uppercases)? ");
+                while (card.typeEmail !== 'HOME' && card.typeEmail !== 'WORK'){
+                    card.typeEmail = prompt("Wrong input. Is it a HOME mail or a WORK mail(type in uppercases)? ");
                 }
-                let email = prompt("Enter the email : ");
-                let typeTel = prompt("Before entering the phone number : is it HOME, CELL or WORK? (type the word in uppercases) ");
-                while (typeTel !== 'HOME' && typeTel !== 'WORK' && typeTel !== 'CELL'){
-                    typeTel = prompt("Wrong input. Is it a HOME mail or a WORK mail(type in uppercases)? ");
+                card.email = prompt("Enter the email : ");
+                card.typeTel = prompt("Before entering the phone number : is it HOME, CELL or WORK? (type the word in uppercases) ");
+                while (card.typeTel !== 'HOME' && card.typeTel !== 'WORK' && card.typeTel !== 'CELL'){
+                    card.typeTel = prompt("Wrong input. Is it a HOME mail or a WORK mail(type in uppercases)? ");
                 }
-                let tel = prompt("Enter a phone number (without white spaces) : ");
-                while (!isNumber(tel) || tel.length > 10) {
-                    tel = prompt("Wrong input. Enter a number with maximum 10 digits : ");
+                card.tel = prompt("Enter a phone number (without white spaces) : ");
+                while (!isNumber(card.tel) || card.tel.length > 10) {
+                    card.tel = prompt("Wrong input. Enter a number with maximum 10 digits : ");
                 }
 
                 //on génère un nouveau fichier vCard
-                fs.appendFile(N + '_' + FN + '.vcf',
-                    'BEGIN:VCARD\nVERSION:4.0\nN:' + N + ';' + FN + '\nFN:' + FN + ' ' + N + '\nEMAIL;' + typeEmail + ':' + email + '\nTEL;' + typeTel + ':' + tel + '\nEND:VCARD',
+                fs.appendFile(card.N + '_' + card.FN + '.vcf',
+                    'BEGIN:VCARD\nVERSION:4.0\nN:' + card.N + ';' + card.FN + '\nFN:' + card.FN + ' ' + card.N + '\nEMAIL;' + card.typeEmail + ':' + card.email + '\nTEL;' + card.typeTel + ':' + card.tel + '\nEND:VCARD',
                     function (err) {
                         if (err) {
                             return console.log(err);
@@ -107,7 +118,7 @@ program
                     });
 
                 //On ajoute le nom au fichier ListVCard.txt
-                fs.appendFile('ListVCard.txt', N + ' ' + FN + '\n', function (err) {
+                fs.appendFile('ListVCard.txt', card.N + ' ' + card.FN + '\n', function (err) {
                     if (err) {
                         return console.log(err);
                         console.log('Erreur pour le fichier ListVCard.txt.');
@@ -122,7 +133,7 @@ program
     // Sert à séparer le fichier par question
     .command('group', 'Ajouter une question à un fichier examen souhaité')
     .argument("<numF>", "C'est le numéro du fichier souhaité")
-    .argument("<numEnonce>", "C'est le num de l'énoncé qu'il faut indiquer")
+    .argument("<numEnonce>", "C'est le numéro de l'énoncé qu'il faut indiquer")
     .argument("<numQ>", "C'est le numéro de la question souhaitée")
     .argument("<nomF>", "C'est le nom du fichier d'examen souhaité")
     .action(({args,logger}) => {
@@ -413,7 +424,6 @@ program
     .command("check", 'Vérifier la qualité des données d’examen')
     .argument("<file>", "Nom du fichier à vérifier")
     .action(({args, logger}) => {
-        console.log("C'est bon")
         const myMap = new Map();
         myMap.set(0, "./SujetB_data/EM-U4-p32_33-Review.gift");
         myMap.set(1, "./SujetB_data/EM-U5-p34-Gra-Expressions_of_quantity.gift");
@@ -535,10 +545,11 @@ program
 
     //****************************************************************
     //Spec 5
-    .command('QualitéNombre', 'Check if <file> is a valid: contains between 15 and 20 questions')
+    .command('qualiteNombre', 'Check if <file> is a valid: contains between 15 and 20 questions')
     .argument("<file>", "C'est le chemin du fichier à tester")
     .action(({args,logger}) => {
 
+        var path=args.file;
         fs.readFile(path, 'utf8', function (err,data) {
             if (err) {
                 return logger.warn(err);
@@ -574,7 +585,7 @@ program
     // Pour faire passer un test à un étudiant
     // Il faut trier les questions et les réponses
     .command('test', 'Fonction qui fait passer le test à un étudiant')
-    .argument('<fileExam>', 'Le fichier de type examen')
+    .argument('<fileExam>', 'Le chemin du fichier de type examen')
     .action(({args, logger}) => {
 
         let pathExam = args.fileExam.toString();
