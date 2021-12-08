@@ -1,4 +1,3 @@
-//const { logger } = require("logger/index");
 
 var VpfParser=function(){
     // The list of POI parsed from the input file.
@@ -10,10 +9,7 @@ var VpfParser=function(){
 //On spépare les questions et énoncés du fichier
 VpfParser.prototype.separer = function(data) {
 
-    //console.log("On est dans separer");
-    //console.log("***********************");
-    
-    //On détecte l'énoncé lorsqu'il n'y a pas d'accolade!!
+    //On détecte l'énoncé lorsqu'il n'y a pas d'accolade
     //Il faut trier le fichier écrit
     var separator;
     if (data.includes('::U')) {
@@ -24,7 +20,6 @@ VpfParser.prototype.separer = function(data) {
         logger.info("Erreur, le fichier n'est pas en format GIFT");
     }
 
-    //data = data.replace(/::U/gi, ",::U");
     data = data.split(separator);
     data = data.filter((val,idx) => !val.match(separator));
 
@@ -94,19 +89,7 @@ VpfParser.prototype.parse = function(data){
 }
 
 VpfParser.prototype.test = function(data){
-
-    //On refait un parseur avec un élément de l'objet pasrer qui contient ce qu'on doit afficher dans l'ordre
-    //Par exemple: retour[0]--> ça affiche enoncé ou question
-    //On peux faire un tableau à deux dimensions:
-    //1er index c'est le numéro de la question et pour chaque index il y a l'enoncé ou questions et les réponses et la propositions et un numéro qui indique le type de question
-    //Parce que suivant le type de questions on affiche ou non des propositions
-    //Du coup faire une double boucle qui affiche en fonction des paramètres
-    //Pas besoin de définir le type pour cette fonction mais en vrai faut le faire pour les dernières specs donc go
-    //Cas d'un simple énoncé: on mets tous les autres cases à zéro
-    //console.log("on est dans test");
-    //console.log("###################");
-    this.triAffichage(data);
-    
+    this.triAffichage(data); 
 }
 
 VpfParser.prototype.triAffichage = function(data){
@@ -165,7 +148,7 @@ VpfParser.prototype.EnonceQuestion = function(data,numero){
     
 
     //On enlève les éléments parasites
-    var re = /(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)|(\[marked\])|(<\/small>)|(<small>)/gi;
+    var re = /(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)|(\[marked\])|(<\/small>)|(<small>)|(<h4>)|(<\/h4>)|(<\/blockquote>)|(<blockquote>)|(\[markdown\])/gi;
 
     //Si c'est un énoncé
     if(!EnonceParsed.includes("{")){
@@ -254,10 +237,6 @@ VpfParser.prototype.Reponses = function (question, numero) {
                         } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0);
                     }
                 }
-
-
-                /*if (nbReponses.length === 1) console.log("La réponse de la question est : " + reponse);
-                else console.log("Les réponses possibles à la question sont : " + reponse);*/
                 return reponse;
             }
             else{   //C'est une matching question
@@ -414,10 +393,6 @@ VpfParser.prototype.TypeQuestion = function(data,numero){
         EnonceParsed=EnonceParsed.split('}');
         data = data.filter((val,idx) => !val.match(separator));
         EnonceParsed=EnonceParsed[0];
-
-        //console.log("Contenu de la première réponse:"+EnonceParsed);
-
-        //console.log("********** L'énonce parsed est : " + EnonceParsed);
 
         //On a le contenu de la réponses
         //Si il contient une flèche c'est un type "correspondance"--> on renvoie 3
