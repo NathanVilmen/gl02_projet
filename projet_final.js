@@ -13,27 +13,6 @@ const vg = require('vega');
 const vegalite = require('vega-lite');
 
 program
-    .command('essai', "juste des tests")
-    //pas d'argument
-    .action((logger) => {
-
-        let pathName="./SujetB_data/EM-U4-p32_33-Review.gift";
-
-        fs.readFile(pathName, 'utf8', function (err,data) {
-            if (err) {
-                return logger.warn(err);
-            }
-            
-            let analyzer=new VpfParser();
-            let analyz2=new VpfParser();
-            //analyz2.parse(data);
-            analyzer.test(data);
-        })   
-    })
-
-
-
-
     // Sert à séparer le fichier par question
     //.version('vpf-parser-cli')
     //.version('0.07')
@@ -535,7 +514,7 @@ program
 
     //****************************************************************
     //Spec 5
-    .command('QualitéNombre', 'Check if <file> is a valid: contains between 15 and 20 questions')
+    .command('qualiteNombre', 'Check if <file> is a valid: contains between 15 and 20 questions')
     .argument("<file>", "C'est le chemin du fichier à tester")
     .action(({args,logger}) => {
 
