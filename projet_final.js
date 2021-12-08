@@ -13,27 +13,6 @@ const vg = require('vega');
 const vegalite = require('vega-lite');
 
 program
-    .command('essai', "juste des tests")
-    //pas d'argument
-    .action((logger) => {
-
-        let pathName="./SujetB_data/EM-U4-p32_33-Review.gift";
-
-        fs.readFile(pathName, 'utf8', function (err,data) {
-            if (err) {
-                return logger.warn(err);
-            }
-            
-            let analyzer=new VpfParser();
-            let analyz2=new VpfParser();
-            //analyz2.parse(data);
-            analyzer.test(data);
-        })   
-    })
-
-
-
-
     // Sert à séparer le fichier par question
     //.version('vpf-parser-cli')
     //.version('0.07')
@@ -949,7 +928,7 @@ program
 
                 for (let i = 0 ; i < nbFichiers ; i++){
 
-                    let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question : ");
+                    let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question (avec .gift à la fin): ");
                     let data = lireFichier(path);
                     //fs.readFile(path, 'utf8', function (err,data) {
                     // if (err) {
@@ -987,44 +966,20 @@ program
                                 break;
                         }
                     }
-                    console.log("Les données du fichier sont : ");
-                    console.log(nbQCMBanque);
-                    console.log(nbVFBanque);
-                    console.log(nbCORRBanque);
-                    console.log(nbMMBanque);
-                    console.log(nbNUMBanque);
-                    console.log(nbOUVBanque);
-
-                    /*//puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
-                    nbQCMBanque /= nbFichiers;
-                    nbVFBanque /= nbFichiers;
-                    nbCORRBanque /= nbFichiers;
-                    nbMMBanque /= nbFichiers;
-                    nbNUMBanque /= nbFichiers;
-                    nbOUVBanque /= nbFichiers;*/
                 }
-
-                console.log("Les données sont : ");
-                console.log(nbQCMBanque);
-                console.log(nbVFBanque);
-                console.log(nbCORRBanque);
-                console.log(nbMMBanque);
-                console.log(nbNUMBanque);
-                console.log(nbOUVBanque);
-
-                /*//puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
+                //puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
                 nbQCMBanque /= nbFichiers;
                 nbVFBanque /= nbFichiers;
                 nbCORRBanque /= nbFichiers;
                 nbMMBanque /= nbFichiers;
                 nbNUMBanque /= nbFichiers;
-                nbOUVBanque /= nbFichiers;*/
+                nbOUVBanque /= nbFichiers;
 
                 let comparaison = {
                     "data": {
                         "values": [
                             {"fichier": "Examen", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMExamen, nbVFExamen,nbCORRExamen,nbMMExamen,nbNUMExamen,nbOUVExamen]},
-                            {"fichier": "Banque", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMBanque, nbVFBanque,nbCORRBanque,nbMMBanque,nbNUMBanque,nbOUVBanque]}
+                            {"fichier": "Banque (moyenne)", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMBanque, nbVFBanque,nbCORRBanque,nbMMBanque,nbNUMBanque,nbOUVBanque]}
                         ]
                     },
                     "transform": [{"flatten": ["type", "nombre"]}],
