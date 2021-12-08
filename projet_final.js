@@ -955,31 +955,7 @@ program
                                 break;
                         }
                     }
-                    /*console.log("Les données du fichier sont : ");
-                    console.log(nbQCMBanque);
-                    console.log(nbVFBanque);
-                    console.log(nbCORRBanque);
-                    console.log(nbMMBanque);
-                    console.log(nbNUMBanque);
-                    console.log(nbOUVBanque);*/
-
-                    /*//puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
-                    nbQCMBanque /= nbFichiers;
-                    nbVFBanque /= nbFichiers;
-                    nbCORRBanque /= nbFichiers;
-                    nbMMBanque /= nbFichiers;
-                    nbNUMBanque /= nbFichiers;
-                    nbOUVBanque /= nbFichiers;*/
                 }
-
-                console.log("Les données sont : ");
-                console.log(nbQCMBanque);
-                console.log(nbVFBanque);
-                console.log(nbCORRBanque);
-                console.log(nbMMBanque);
-                console.log(nbNUMBanque);
-                console.log(nbOUVBanque);
-
                 //puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
                 nbQCMBanque /= nbFichiers;
                 nbVFBanque /= nbFichiers;
@@ -987,14 +963,6 @@ program
                 nbMMBanque /= nbFichiers;
                 nbNUMBanque /= nbFichiers;
                 nbOUVBanque /= nbFichiers;
-
-                console.log("Les données du fichier sont : ");
-                console.log(nbQCMBanque);
-                console.log(nbVFBanque);
-                console.log(nbCORRBanque);
-                console.log(nbMMBanque);
-                console.log(nbNUMBanque);
-                console.log(nbOUVBanque);
 
                 let comparaison = {
                     "data": {
