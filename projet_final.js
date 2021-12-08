@@ -938,7 +938,7 @@ program
 
                 for (let i = 0 ; i < nbFichiers ; i++){
 
-                    let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question : ");
+                    let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question (avec .gift à la fin): ");
                     let data = lireFichier(path);
                     //fs.readFile(path, 'utf8', function (err,data) {
                     // if (err) {
@@ -976,13 +976,13 @@ program
                                 break;
                         }
                     }
-                    console.log("Les données du fichier sont : ");
+                    /*console.log("Les données du fichier sont : ");
                     console.log(nbQCMBanque);
                     console.log(nbVFBanque);
                     console.log(nbCORRBanque);
                     console.log(nbMMBanque);
                     console.log(nbNUMBanque);
-                    console.log(nbOUVBanque);
+                    console.log(nbOUVBanque);*/
 
                     /*//puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
                     nbQCMBanque /= nbFichiers;
@@ -1001,19 +1001,27 @@ program
                 console.log(nbNUMBanque);
                 console.log(nbOUVBanque);
 
-                /*//puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
+                //puis on calcule l'occurrence moyenne, en divisant par le nombre de fichiers
                 nbQCMBanque /= nbFichiers;
                 nbVFBanque /= nbFichiers;
                 nbCORRBanque /= nbFichiers;
                 nbMMBanque /= nbFichiers;
                 nbNUMBanque /= nbFichiers;
-                nbOUVBanque /= nbFichiers;*/
+                nbOUVBanque /= nbFichiers;
+
+                console.log("Les données du fichier sont : ");
+                console.log(nbQCMBanque);
+                console.log(nbVFBanque);
+                console.log(nbCORRBanque);
+                console.log(nbMMBanque);
+                console.log(nbNUMBanque);
+                console.log(nbOUVBanque);
 
                 let comparaison = {
                     "data": {
                         "values": [
                             {"fichier": "Examen", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMExamen, nbVFExamen,nbCORRExamen,nbMMExamen,nbNUMExamen,nbOUVExamen]},
-                            {"fichier": "Banque", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMBanque, nbVFBanque,nbCORRBanque,nbMMBanque,nbNUMBanque,nbOUVBanque]}
+                            {"fichier": "Banque (moyenne)", "type": ["QCM", "Vrai-Faux","Correspondance", "Mot-manquant", "Numerique","Ouverte"], "nombre": [nbQCMBanque, nbVFBanque,nbCORRBanque,nbMMBanque,nbNUMBanque,nbOUVBanque]}
                         ]
                     },
                     "transform": [{"flatten": ["type", "nombre"]}],
