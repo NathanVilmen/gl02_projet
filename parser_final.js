@@ -204,31 +204,66 @@ VpfParser.prototype.Reponses = function (question, numero) {
             let indexReponses;
             let caractereLu;
 
-            if (nbReponses.length === 1) {
-                reponse = new Array(1);
-                reponse[0] = '';
-                //Premièrement on récupère l'index du premier { pour savoir où sont les réponses
-                indexReponses = question[numero].indexOf('=');
-                //console.log("indexReponses = " + indexReponses);
-                caractereLu = question[numero].charAt(indexReponses + 1);
-                do {
-                    indexReponses++;
-                    //console.log(indexReponses);
-                    caractereLu = question[numero].charAt(indexReponses);
-                    //console.log("Le caractère lu est : " + caractereLu);
-                    //console.log("tilde : " + caractereLu.localeCompare('~'));
-                    //console.log("accolade " + caractereLu.localeCompare('{'));
-                    if (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0) {
-                        //reponse.append(caractereLu);
-                        reponse[0] = reponse[0] + caractereLu;
-                        //On supprime les \n de la réponse
-                        reponse[0]=reponse[0].replace(/\n|\r|\t/g, '');
+            if(question[numero].includes('->') === false) { //Ce n'est pas une matching question
+                if (nbReponses.length === 1) {
+                    reponse = new Array(1);
+                    reponse[0] = '';
+                    //Premièrement on récupère l'index du premier { pour savoir où sont les réponses
+                    indexReponses = question[numero].indexOf('=');
+                    //console.log("indexReponses = " + indexReponses);
+                    caractereLu = question[numero].charAt(indexReponses + 1);
+                    do {
+                        indexReponses++;
+                        //console.log(indexReponses);
+                        caractereLu = question[numero].charAt(indexReponses);
+                        //console.log("Le caractère lu est : " + caractereLu);
+                        //console.log("tilde : " + caractereLu.localeCompare('~'));
+                        //console.log("accolade " + caractereLu.localeCompare('{'));
+                        if (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0) {
+                            //reponse.append(caractereLu);
+                            reponse[0] = reponse[0] + caractereLu;
+                            //On supprime les \n de la réponse
+                            reponse[0] = reponse[0].replace(/\n|\r|\t/g, '');
+                        }
+                        //console.log("La réponse est maintenant : " + reponse)
+                    } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0);
+                } else {
+                    reponse = new Array(nbReponses.length);
+                    for (let i = 0; i < nbReponses.length; i++) {
+                        reponse[i] = '';
+                        //Premièrement on récupère l'index du premier { pour savoir où sont les réponses
+                        if (i === 0) indexReponses = question[numero].indexOf('=');
+                        else indexReponses = question[numero].indexOf('=', indexReponses);
+                        //console.log("indexReponses = " + indexReponses);
+                        caractereLu = question[numero].charAt(indexReponses + 1);
+                        do {
+                            indexReponses++;
+                            caractereLu = question[numero].charAt(indexReponses);
+                            //console.log("Le caractère lu est : " + caractereLu);
+                            //console.log("tilde : " + caractereLu.localeCompare('~'));
+                            //console.log("accolade " + caractereLu.localeCompare('{'));
+
+                            if (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0) {
+                                //reponse.append(caractereLu);
+                                reponse[i] = reponse[i] + caractereLu;
+
+                                //On supprime les \n de la réponse
+                                reponse[i] = reponse[i].replace(/\n|\r|\t/g, '');
+                            }
+                            //console.log("La réponse est maintenant : " + reponse[i])
+                        } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0);
                     }
-                    //console.log("La réponse est maintenant : " + reponse)
-                } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0);
-            } else {
-                reponse = new Array(nbReponses.length);
-                for (let i = 0; i < nbReponses.length; i++) {
+                }
+
+
+                /*if (nbReponses.length === 1) console.log("La réponse de la question est : " + reponse);
+                else console.log("Les réponses possibles à la question sont : " + reponse);*/
+                return reponse;
+            }
+            else{   //C'est une matching question
+                reponse = new Array((nbReponses.length*2));
+                let i=0;
+                for (i = 0; i < nbReponses.length; i++) {   //On récupère tous les =
                     reponse[i] = '';
                     //Premièrement on récupère l'index du premier { pour savoir où sont les réponses
                     if (i === 0) indexReponses = question[numero].indexOf('=');
@@ -242,21 +277,38 @@ VpfParser.prototype.Reponses = function (question, numero) {
                         //console.log("tilde : " + caractereLu.localeCompare('~'));
                         //console.log("accolade " + caractereLu.localeCompare('{'));
 
-                        if (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0) {
+                        if (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0 && caractereLu.localeCompare('->') !== 0) {
                             //reponse.append(caractereLu);
                             reponse[i] = reponse[i] + caractereLu;
 
                             //On supprime les \n de la réponse
-                            reponse[i]=reponse[i].replace(/\n|\r|\t/g, '');
+                            reponse[i] = reponse[i].replace(/\n|\r|\t/g, '');
                         }
                         //console.log("La réponse est maintenant : " + reponse[i])
-                    } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0);
+                    } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0 && caractereLu.localeCompare('->') !==0);
+                }
+                for (let j = nbReponses.length; j < (nbReponses.length*2); j++) {   //On récupère tous les ->
+                    reponse[j] = '';
+                    //Premièrement on récupère l'index du premier { pour savoir où sont les réponses
+                    if (j === nbReponses.length) indexReponses = question[numero].indexOf('->');
+                    else indexReponses = question[numero].indexOf('->', indexReponses);
+                    //console.log("indexReponses = " + indexReponses);
+                    caractereLu = question[numero].charAt(indexReponses + 1);
+                    do {
+                        indexReponses++;
+                        caractereLu = question[numero].charAt(indexReponses);
+
+                        if (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0 && caractereLu.localeCompare('->') !== 0) {
+                            reponse[j] = reponse[j] + caractereLu;
+
+                            //On supprime les \n de la réponse
+                            reponse[j] = reponse[j].replace(/\n|\r|\t/g, '');
+                        }
+                        //console.log("La réponse est maintenant : " + reponse[i])
+                    } while (caractereLu.localeCompare('~') !== 0 && caractereLu.localeCompare('}') !== 0 && caractereLu.localeCompare('=') !== 0 && caractereLu.localeCompare('->') !== 0);
+
                 }
             }
-
-
-            /*if (nbReponses.length === 1) console.log("La réponse de la question est : " + reponse);
-            else console.log("Les réponses possibles à la question sont : " + reponse);*/
             return reponse;
         }
     }
@@ -264,7 +316,7 @@ VpfParser.prototype.Reponses = function (question, numero) {
 
 }
 
-VpfParser.prototype.ReponsesPossibles = function(question,numero) {
+VpfParser.prototype.ReponsesPossibles = function(question,numero) { //Sert pour un QCM
 
     let nbReponses = 0;
     let nbReponsesJustes = 0;

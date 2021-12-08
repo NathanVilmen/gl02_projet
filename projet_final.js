@@ -614,7 +614,7 @@ program
 
                 //On affiche la ou les questions
                 console.log("-- Informations sur l'exercice --");
-                console.log("Dans l'exercice il y a " + analyzerResultat.filTest[i][1].length + " questions");
+                //console.log("Dans l'exercice il y a " + analyzerResultat.filTest[i][1].length + " questions");
                 console.log("Type de l'exercice :");
                 switch (analyzerResultat.filTest[i][2]) {
                     case 1 :
@@ -659,9 +659,27 @@ program
                         });
                     }
                 }
+                else if(analyzerResultat.filTest[i][2] === 3){  //matching question
+                    console.log("Voici les choix possibles :");
+                    console.log("Les premières parties possibles sont avant le -, les deuxièmes parties après le - ");
+                    for (let j = 0; j < analyzerResultat.filTest[i][1].length/2; j++) {
+                        for (let k = 0; k < (analyzerResultat.filTest[i][1].length/2); k++) {
+                            if(analyzerResultat.filTest[i][1][k].localeCompare('') !== 0){
+                                //let aAfficher = analyzerResultat.filTest[i][1][k].replace(">", '')
+                                console.log(analyzerResultat.filTest[i][1][k]);
+                            }
+                        }
+                        console.log("Rentrez la réponse de cette manière : Je vais - à l'école");
+                        reponse[i][j] = prompt("Veuillez rentrer votre réponse pour la ligne " + j + ", si vous ne voulez rien mettre tapez un \"-\" ");
+                        fs.appendFile(pathReponses, reponse[i][0]+'\n', function (err) {
+                            if (err) return console.log(err);
+                        });
+                    }
+
+                }
                 else{   //On a 1 question pour 1 exercice
                     if(analyzerResultat.filTest[i][2] === 1){
-                        console.log("Voici les choix possibles :");
+                        console.log("\nVoici les choix possibles :");
                         for (let k = 0; k < analyzerResultat.filTest[i][3].length; k++) {
                             if(analyzerResultat.filTest[i][3][k].localeCompare('') !== 0){
                                 console.log(analyzerResultat.filTest[i][3][k]);
@@ -683,8 +701,21 @@ program
                 let exerciceAvecPlusieursQuestions  = 0;
 
                 for (let i = 0; i < analyzerExam.question.length; i++) {
-                    console.log("\n----- Résultat exercice " + (i+1) + " -----");   //+1 pour paas avoir d'exercice 0
-                    if (reponse[i].length === 1 && analyzerExam.question[i].match(symbole2).length===analyzerExam.question[i].match(symbole1).length) {  //Une seule réponse juste pour la question
+                    console.log("\n----- Résultat exercice " + (i+1) + " -----");   //+1 pour pas avoir d'exercice 0
+                    if(analyzerResultat.filTest[i][2] === 3) {  //matching question
+                        console.log("Matching question");
+                        for (let j = 0; j < analyzerResultat.filTest[i][1].length/2; j++) {
+                            console.log("Réponse de la base de données à comparer : " + analyzerResultat.filTest[i][1][j]);
+                            console.log("Réponse entrée par l'utilisateur : " + reponse[i][j]);
+                            if(analyzerResultat.filTest[i][1][j].includes(reponse[i][j])){
+                                console.log("Vous avez la bonne réponse !");
+                            } else {
+                                console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzerResultat.filTest[i][1][j]);
+                                nbErreurs++;
+                            }
+                        }
+                    }
+                    else if (reponse[i].length === 1 && analyzerExam.question[i].match(symbole2).length===analyzerExam.question[i].match(symbole1).length) {  //Une seule réponse juste pour la question
                         console.log("Réponse de la base de données à comparer : " + analyzerResultat.filTest[i][1][0]);
                         console.log("Réponse entrée par l'utilisateur : " + reponse[i][0]);
                         if (analyzerResultat.filTest[i][1][0].trim().localeCompare(reponse[i][0]) === 0) {   //trim pour supprimer les espaces inutiles
