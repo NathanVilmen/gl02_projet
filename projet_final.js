@@ -589,15 +589,12 @@ program
             }
 
             dataReadExam=dataExam;
-            //console.log("dataExam = " + dataExam);
-            //console.log("dataReadExam = " + dataReadExam);
 
             analyzerExam.parse(dataExam, pathExam);
-            console.log("On a parsé");
+            //console.log("On a parsé");
 
-            console.log("----- Vous allez passer un examen composé de " + analyzerExam.question.length + " exercices -----");
             let pathReponses = prompt("Quel nom voulez vous donner au fichier contenant vos réponses au test ? ");
-            pathReponses = "./" + pathReponses + ".gift";  //On génère un fichier en .gift mais ici ça n'a pas d'importance, un fichier .txt aurait marché
+            pathReponses = "./" + pathReponses + ".gift";
 
             analyzerResultat.test(dataExam, pathExam);
 
@@ -606,29 +603,55 @@ program
             const symbole1 = /=/g;
             const symbole2 = /{/g;
 
+            console.log("\n----- Vous allez passer un examen composé de " + analyzerExam.question.length + " exercices -----");
             for (let i = 0; i < analyzerExam.question.length; i++) {
                 reponse[i] = new Array(analyzerExam.question[i].match(symbole2).length) //Il y a autant de réponses à une question que de questions
-                console.log("\n-- Exercice " + i + " --");
+                console.log("\n----- Exercice " + (i+1) + " -----");    //+1 pour pas avoir d'exercice 0
                 //S'il y a un énoncé on doit l'afficher
                 if(analyzerResultat.enonce[i] !== undefined) {
                     console.log(analyzerResultat.enonce[i]);    //0 pour l'énoncer
                 }
+
                 //On affiche la ou les questions
-                console.log("taille EnonceQuestion : " + analyzerResultat.filTest[i][0].length);
+                console.log("-- Informations sur l'exercice --");
                 console.log("Dans l'exercice il y a " + analyzerResultat.filTest[i][1].length + " questions");
-                console.log("Le type de l'exercice est " + analyzerResultat.filTest[i][2]);
+                console.log("Type de l'exercice :");
+                switch (analyzerResultat.filTest[i][2]) {
+                    case 1 :
+                        console.log("C'est un QCM");
+                        break;
+                    case 2 :
+                        console.log("C'est un vrai/faux");
+                        break;
+                    case 3 :
+                        console.log("C'est une correspondance");
+                        break;
+                    case 4 :
+                        console.log("C'est un mot manquant");
+                        break;
+                    case 5 :
+                        console.log("C'est un numérique");
+                        break;
+                    case 6 :
+                        console.log("C'est une question ouverte");
+                        break;
+                    default :
+                        console.log("Type de question non valide.\n") ;
+                    break;
+                }
                 console.log("\nL'exercice est :\n" + analyzerResultat.filTest[i][0]);
 
-                //console.log("L'énoncé est : " + analyzerResultat.filTest[i][0]);
                 if(analyzerExam.question[i].match(symbole2).length >= 2){  //On a plusieurs questions pour 1 exercice
                     for (let j = 0; j < analyzerResultat.filTest[i][1].length; j++) {
                         if(analyzerResultat.filTest[i][2] === 1){
                             console.log("Voici les choix possibles :");
-                            for (let k = 0; k < analyzerResultat.filTest[i][3].length; k++) {
-                                if(analyzerResultat.filTest[i][3][k].localeCompare('') !== 0) {
-                                    console.log(analyzerResultat.filTest[i][3][k]);
+                            for (let k = (4*j); k < (4*j+(3+1)); k++) {
+                                if(analyzerResultat.filTest[i][3][k].localeCompare('') !== 0) { //On affiche les mauvaises réponses
+                                    console.log("- " + analyzerResultat.filTest[i][3][k]);
                                 }
                             }
+                            //On affiche la bonne réponse
+                            console.log("- " + analyzerResultat.filTest[i][3][3*(analyzerResultat.filTest[i][1].length)+j+analyzerResultat.filTest[i][1].length]);
                         }
                         reponse[i][j] = prompt("Veuillez rentrer votre réponse à la question n°" + j + ", si vous ne voulez rien mettre tapez un \"-\" ");
                         fs.appendFile(pathReponses, reponse[i][j]+'\n', function (err) {
@@ -650,20 +673,6 @@ program
                         if (err) return console.log(err);
                     });
                 }
-
-
-
-                /*console.log("La question est :\n" + analyzerResultat.filTest[i][0]);
-
-                //Si c'est un choix multiple on doit afficher les réponses possibles
-                console.log("Le type de l'exercice est " + analyzerResultat.filTest[i][4]);
-                if(analyzerResultat.filTest[i][4] === 1){
-                    console.log("Voici les choix possibles : \n " + analyzerResultat.filTest[i][1]);
-                }
-                let reponse = prompt("Veuillez rentrer votre réponse, si vous ne voulez rien mettre tapez un \"-\" ");
-                fs.appendFile(pathReponses, reponse+'\n', function (err) {
-                    if (err) return console.log(err);
-                });*/
             }
 
 
@@ -671,21 +680,14 @@ program
 
             console.log("----- Vérification du test -----");
             fs.readFile(pathReponses, 'utf8', function (err,dataReponses){
-                //console.log(dataReponses);
-                //dataReponses=dataReponses.toString().split('\n');
                 let exerciceAvecPlusieursQuestions  = 0;
 
-                console.log("Vos réponses sont : " + reponse);
-                console.log("reponse[0] = " + reponse[0]);
-
                 for (let i = 0; i < analyzerExam.question.length; i++) {
-                    console.log("\n-- Résultat exercice " + i + " --");
-                    console.log("filTest[" + i + "][1].length = " + analyzerResultat.filTest[i][1].length);
-                    //Trouver autre chose à tester pour la taille. Parce que si c'est un tableau ça nous donne le nombre de case mais si c'est juste une chaine de caractère ça nous donne la taille du String
+                    console.log("\n----- Résultat exercice " + (i+1) + " -----");   //+1 pour paas avoir d'exercice 0
                     if (reponse[i].length === 1 && analyzerExam.question[i].match(symbole2).length===analyzerExam.question[i].match(symbole1).length) {  //Une seule réponse juste pour la question
-                        console.log("Réponse à comparer : " + analyzerResultat.filTest[i][1][0]);
-                        console.log("Réponse entrée : " + reponse[i][0]);
-                        if (analyzerResultat.filTest[i][1][0].trim().localeCompare(reponse[i][0]) === 0) {   //trimEnd pour supprimer les espaces inutiles
+                        console.log("Réponse de la base de données à comparer : " + analyzerResultat.filTest[i][1][0]);
+                        console.log("Réponse entrée par l'utilisateur : " + reponse[i][0]);
+                        if (analyzerResultat.filTest[i][1][0].trim().localeCompare(reponse[i][0]) === 0) {   //trim pour supprimer les espaces inutiles
                             console.log("Vous avez la bonne réponse !");
                         } else {
                             console.log("Vous n'avez pas la bonne réponse, la bonne réponse était " + analyzerResultat.filTest[i][1]);
@@ -695,8 +697,8 @@ program
                     else if(reponse[i].length !== 1){   //1 réponse pour 1 question d’un exercice comportant plusieurs questions, ici il faut tester quand Alexis aura mis à jour le parser EnonceQuestion(), s'il met une question par case on test sur le nombdre de EnonceQuestion
                         //Sinon on doit
                         for (let j = 0; j < reponse[i].length; j++) {
-                            console.log("A comparer : " + reponse[i][j]);
-                            console.log("La solution est : " + analyzerResultat.filTest[i][1][j]);
+                            console.log("Réponse entrée par l'utilisateur : " + reponse[i][j]);
+                            console.log("Réponse de la base de données à comparer : " + analyzerResultat.filTest[i][1][j]);
                             if (analyzerResultat.filTest[i][1][j].trim().localeCompare(reponse[i][j]) === 0) {
                                 console.log("Vous avez la bonne réponse !");
                             }
@@ -722,11 +724,10 @@ program
                         }
                     }
                 }
+
+                console.log("----- Récapitulatif de l'examen -----")
                 console.log("Au final, sur " + analyzerExam.question.length + " exercice(s), vous avez fait " + nbErreurs + " erreurs");
 
-                //On affiche l'énoncé et les questions en rapport avec l'énoncé
-                //On affiche ensuite les réponses possibles
-                //Puis on affiche un bilan de réponses
             })
         })
     })
