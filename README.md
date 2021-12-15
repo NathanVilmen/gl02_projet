@@ -9,28 +9,39 @@ Il gere des fichiers au format GIFT.
 
 ## Installation
 
-$ npm install
+Installation des packages 
+`$ npm install`
 
-(S'assurer que le dossier node_modules ainsi cree contient @Caporal, prompt-sync et Vega)
+(S'assurer que le dossier node_modules ainsi créé contient @Caporal, prompt-sync et Vega)
 
 ## Utilisation
 
-$ node projet_final.js <command> [argument]
+Commande d'exécution générale 
+`$ node projet_final.js <command> [argument]`
 
 ### <command> : contact
 
-- Cette fonction permet de generer un fichier de contact VCard a partir des informations demandees
+`$ node projet_final.js contact`
+
+- Cette fonction permet de generer un fichier de contact VCard à partir des informations demandées
 
 - -h or --help 	: affiche l'aide du programme quant à l'utilisation de la fonction
 
 ### <command> : group [argument]
 
+`$ node projet_final.js group [numF] [numEnonce] [numQ] [nomF]`
+
 - Cette fonction permet de regrouper un ensemble de questions. Cet ensemble constitueras un fichier examen GIFT
-- [argument] : numero de fichier souhaite, numero de l'énonce souhaite, numero de la question souhaite, nom qu'on veut donner au fichier examen
+- `[numF]` : numero de fichier souhaite
+- `[numEnonce]` :  numero de l'énonce souhaite
+- `[numQ]` : numero de la question souhaite
+- `[nomF]` : nom qu'on veut donner au fichier examen
 
 - -h or --help 	: affiche l'aide du programme quant à l'utilisation de la fonction
 
 ### <command> : viewer
+
+`$ node projet_final.js viewer`
 
 - Cette fonction permet de rechercher et visualiser une question, afin de la choisir
 
@@ -38,19 +49,25 @@ $ node projet_final.js <command> [argument]
 
 ### <command> : check [file]
 
+`$ node projet_final.js check [file]`
+
 - Cette fonction permet de verifier que le fichier d'examen est valide (pas de double)
-- [file] : chemin du fichier a verifier
+- `[file]` : chemin du fichier a verifier
 
 - -h or --help 	: affiche l'aide du programme quant à l'utilisation de la fonction
 
 ### <command> : qualiteNombre [file]
 
+`$ node projet_final.js qualiteNombre [file]`
+
 - Cette fonction permet de verifier que le fichier examen contient bien 15 à 20 questions
-- [file] : chemin du fichier a verifier
+- `[file]` : chemin du fichier a verifier
 
 - -h or --help 	: affiche l'aide du programme quant à l'utilisation de la fonction
 
 ### <command> : test [file]
+
+`$ node projet_final.js test [file]`
 
 - Cette fonction permet de simuler la passation d'un examen
 - [file] : chemin du fichier examen
@@ -116,10 +133,18 @@ Programme fonctionnel et pret a être livre.
 
 ## Liste des contributeurs
 
+**Développeurs principaux**
+
 Alexis HOOREWEGE, Maxime MIRGALET et Nathan VILMEN.
+
+**Développeurs maintenance**
+
+Tom BOULESTEIX, Théo KOENIGS, Simon GAUTIER, Maëly TAN
+
+## Dates de développement
 
 Novembre - Decembre 2021
 
 ## License
 
-Tous droits reserves.
+Ce projet est sous license GNU General Public License v3.0. [En savoir plus](https://choosealicense.com/licenses/gpl-3.0/)
