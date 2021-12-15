@@ -126,4 +126,4 @@ Novembre - Decembre 2021
 
 ## License
 
-Tous droits reserves.
+Ce projet est sous license GNU General Public License v3.0. [En savoir plus](https://choosealicense.com/licenses/gpl-3.0/)
