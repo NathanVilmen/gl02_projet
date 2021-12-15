@@ -1,3 +1,19 @@
+# GL02_projet
+
+Git pour le projet de GL02
+
+# Projet Tempete glacee : gestion de fichiers GIFT
+
+Le projet Tempete glacee (projet_final.js) est un outil de gestion et preparation de tests et examens en ligne. 
+Il gere des fichiers au format GIFT.
+
+## Installation
+
+Installation des packages 
+`$ npm install`
+
+(S'assurer que le dossier node_modules ainsi créé contient @Caporal, prompt-sync et Vega)
+
 ## Historique des versions
 
 ### Version 0.1 :
