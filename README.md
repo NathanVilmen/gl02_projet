@@ -128,6 +128,8 @@ Alexis HOOREWEGE, Maxime MIRGALET et Nathan VILMEN.
 
 Tom BOULESTEIX, Théo KOENIGS, Simon GAUTIER, Maëly TAN
 
+## Dates de développement
+
 Novembre - Decembre 2021
 
 ## License
