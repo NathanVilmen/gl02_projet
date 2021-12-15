@@ -76,6 +76,8 @@ Commande d'exécution générale
 
 ### <command> : profil [file]
 
+`$ node projet_final.js profil [file]`
+
 - permet à l’utilisateur d’établir un profil des types de questions pour un examen. Genere un diagramme .svg
 
 - [file] : fichier pour lequel on veut etablir un profil
@@ -84,13 +86,17 @@ Commande d'exécution générale
 
 ### <command> : comparer [file]
 
+`$ node projet_final.js comparer [file]`
+
 - Cette fonction permet a l'utilisateur de comparer le profil du fichier de son examen avec un nombre [n] de fichiers de la banque d’examen. Génère un histogramme de comparaison .svg
 
 - -h or --help 	: affiche l'aide du programme quant à l'utilisation de la fonction
 
 ### <command> : readme
 
-- Cette fonction permet d'afficher le fichier README.txt.
+`$ node projet_final.js readme`
+
+- Cette fonction permet d'afficher le fichier README.md 
 
 - -h or --help 	: affiche l'aide du programme quant à l'utilisation de la fonction
 
