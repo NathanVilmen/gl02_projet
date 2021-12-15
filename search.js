@@ -1,7 +1,6 @@
 const fs = require('fs');
 const VpfParser = require('./parser.js');
 
-
 var viewer = function(){
     this.question=null; //Je sais pas si on peut mettre à null avant
 }
@@ -32,18 +31,14 @@ viewer.prototype.viewer = function(data){
         console.log("La question a bien été trouvée, la voici");
         console.log(this.tabQuestion);
     })
-
 }
 
 //On crée une fonction qui va nous permettre de rechercher un nom de question
 viewer.prototype.rechercher=function (nomExercice) {
 
-
-
     //Une fois qu'on a trouvé le fichier on le parse
     var analyzer = new VpfParser();
     analyzer.parse(data);   //il faut mettre en argument un fichier
-
 
     //On définit le séparateur
     if(data[0]=="U"){   //Si le fichier commence par U1,U2, etc....
@@ -67,8 +62,6 @@ viewer.prototype.rechercher=function (nomExercice) {
         }
     }
     return //Si on arrive à cette ligne c'est que le for n'a rien trouvé. Mais comment retourner une erreur sachant que le type de retour est une question
-
-
 }
 
 module.exports = viewer();

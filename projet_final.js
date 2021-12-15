@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const prompt = require('prompt-sync')();
+const fs = require("fs");
+const prompt = require("prompt-sync")();
 
-const VpfParser = require('./parser_final.js');
+const VpfParser = require("./parser_final.js");
 
 const { program } = require("@caporal/core");
-const { group } = require('console');
+const { group } = require("console");
 const path = require("path");
 //const { scaleTypePrecedence } = require('vega-lite/build/src/scale');
 
-const vg = require('vega');
-const vegalite = require('vega-lite');
+const vg = require("vega");
+const vegalite = require("vega-lite");
 
 /**
  * Permet de récupérer tous les fichiers du dossier SujetB_data
@@ -26,7 +26,7 @@ let getDataFromAllFiles = function(){
 
     fichiers.forEach(fichier => {
         //On ajoute chaque fichier qui termine par .gift dans la constante myMap
-        if(fichierValide = fichier.match(/.gift$/)) {
+        if(fichierValide = fichier.match(/.*\.gift$/)) {
             myMap.set(i, dir+"/"+fichierValide[0]);
             i++;
         }
@@ -240,7 +240,6 @@ program
             })
         }
         setTimeout(function() {
-            console.log("WEWEWEW"+FichierCorrespondant);
             for(let i=0;i<FichierCorrespondant.length;i++){
 
                 let path = myMap.get(FichierCorrespondant[i]);
@@ -443,7 +442,6 @@ program
             dataReadExam=dataExam;
 
             analyzerExam.parse(dataExam, pathExam);
-            //console.log("On a parsé");
 
             let pathReponses = prompt("Quel nom voulez vous donner au fichier contenant vos réponses au test ? ");
             pathReponses = "./" + pathReponses + ".gift";
@@ -663,14 +661,6 @@ program
             }
         }
 
-        /*console.log("On affiche les données : ");
-        console.log(nbQCM);
-        console.log(nbVF);
-        console.log(nbCORR);
-        console.log(nbMM);
-        console.log(nbNUM);
-        console.log(nbOUV);*/
-
         var profile = {
             "data" : {
                 "values" : [{"Type" : "QCM","Nombre" : nbQCM}, {"Type" : "Vrai-Faux","Nombre" : nbVF}, {"Type" : "Correspondance","Nombre" : nbCORR}, {"Type" : "Mot manquant","Nombre" : nbMM}, {"Type" : "Numérique","Nombre" : nbNUM}, {"Type" : "Ouverte","Nombre" : nbOUV}
@@ -866,9 +856,8 @@ program
 
 type: module;
 
-function lireFichier(path){
-    let fichier = fs.readFileSync(path, 'utf8');
-    return fichier;
+function lireFichier(path) {
+	let fichier = fs.readFileSync(path, "utf8");
+	return fichier;
 }
-program.run()
-
+program.run();

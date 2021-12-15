@@ -21,9 +21,7 @@ $ node projet_final.js <command> [argument]
 
 - Cette fonction permet de generer un fichier de contact VCard a partir des informations demandees
 
-
 - -h or --help 	: affiche l'aide du programme quant à l'utilisation de la fonction
-
 
 ### <command> : group [argument]
 
@@ -37,7 +35,6 @@ $ node projet_final.js <command> [argument]
 - Cette fonction permet de rechercher et visualiser une question, afin de la choisir
 
 - -h or --help 	: affiche l'aide du programme quant à l'utilisation de la fonction
-
 
 ### <command> : check [file]
 
@@ -116,7 +113,6 @@ Programme teste et ameliore. Creation du fichier README.txt, et de la fonction a
 
 ### Version 0.9 :
 Programme fonctionnel et pret a être livre.
-
 
 ## Liste des contributeurs
 
