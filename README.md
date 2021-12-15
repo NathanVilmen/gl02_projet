@@ -120,7 +120,13 @@ Programme fonctionnel et pret a être livre.
 
 ## Liste des contributeurs
 
+**Développeurs principaux**
+
 Alexis HOOREWEGE, Maxime MIRGALET et Nathan VILMEN.
+
+**Développeurs maintenance**
+
+Tom BOULESTEIX, Théo KOENIGS, Simon GAUTIER, Maëly TAN
 
 Novembre - Decembre 2021
 
