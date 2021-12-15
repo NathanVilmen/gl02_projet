@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-var group = function () {
+let group = function () {
 	this.tabQuestion = [];
 };
 
@@ -38,7 +38,7 @@ group.prototype.group = function (data) {
 group.prototype.triQuestion = function (data, numero) {
 	//on définit le séparateur
 	//Si le fichier commence par U1,U2, etc....
-	var separator;
+	let separator;
 	if (data[0] == "U") {
 		separator = "::U";
 	} else {
@@ -53,7 +53,7 @@ group.prototype.triQuestion = function (data, numero) {
 	data = data.filter((val, idx) => !val.match(separator3));
 
 	//On return le numero de la question (c'est le bon chiffre car le premier truc d =u tableau n'est pas une question)
-	var finale = data[numero];
+	let finale = data[numero];
 	return finale;
 };
 

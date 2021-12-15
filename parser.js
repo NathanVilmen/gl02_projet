@@ -1,5 +1,5 @@
 const fs = require("fs");
-var VpfParser = function () {
+let VpfParser = function () {
 	// The list of POI parsed from the input file.
 	this.question = new Array();
 	this.enonce = new Array();
@@ -14,7 +14,7 @@ var VpfParser = function () {
 VpfParser.prototype.separer = function (data, path, valeur) {
 	//On détecte l'énoncé lorsqu'il n'y a pas d'accolade!!
 	//Il faut trier le fichier écrit
-	var separator;
+	let separator;
 	if (path[14] == "U") {
 		separator = "::U";
 	} else {
@@ -44,7 +44,7 @@ VpfParser.prototype.separer = function (data, path, valeur) {
 		}
 	}
 
-	var retour = new Array();
+	let retour = new Array();
 	retour[0] = tabEnonce;
 	retour[1] = tabQuestions;
 	return retour;
@@ -72,7 +72,7 @@ VpfParser.prototype.test = function (question, pathExam, dataReponses) {
 };
 
 VpfParser.prototype.triAffichage = function (question, pathExam, dataReponses) {
-	/*var separator;
+	/*let separator;
     //On cherche le nombre de questions du fichier
     if(dataExam.includes("::U")){
         separator = ('::U');
@@ -130,10 +130,10 @@ VpfParser.prototype.EnonceQuestion = function (data, numero) {
 	console.log("on est dans EnonceQuestion");
 
 	//on parse cet énoncé
-	var EnonceParsed;
+	let EnonceParsed;
 	EnonceParsed = data[numero];
 	//On enlève les éléments parasites
-	var re =
+	let re =
 		/(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)|(\[marked\])|(<\/small>)|(<small>)/gi;
 
 	//Si c'est un énoncé

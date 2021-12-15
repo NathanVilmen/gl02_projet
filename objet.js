@@ -1,4 +1,4 @@
-var question = function () {
+let question = function () {
 	this.num = 0;
 	this.type = [];
 	this.titre = [];
@@ -12,7 +12,7 @@ var question = function () {
 //le paramère data est le parsedPOI
 question.prototype.triNum = function (data) {
 	//on définit le séparateur
-	var separator2 = ": ";
+	let separator2 = ": ";
 	//On sépare la question en deux si ça marche
 	//--> le premier membre est le numéro et deuxième est le reste
 	data = data.split(separator2);
@@ -23,7 +23,7 @@ question.prototype.triNum = function (data) {
 
 question.prototype.triTitre1 = function (data) {
 	//on définit le séparateur
-	var separator3 = "<b>";
+	let separator3 = "<b>";
 	//On sépare la question     .split(/,| /)
 	//--> le deuxième membre est le titre
 	data = data.split(separator3);
@@ -36,7 +36,7 @@ question.prototype.triTitre1 = function (data) {
 
 question.prototype.triTitre2 = function (data) {
 	//on définit le séparateur
-	var separator3 = "</b>";
+	let separator3 = "</b>";
 	//On sépare la question     .split(/,| /)
 	//--> le deuxième membre est le titre
 	data = data.split(separator3);
@@ -49,7 +49,7 @@ question.prototype.triTitre2 = function (data) {
 
 question.prototype.triLocalisation = function (data) {
 	//on définit le séparateur
-	var separator3 = "::";
+	let separator3 = "::";
 	//On sépare la question     .split(/,| /)
 	//--> le deuxième membre est le titre
 	data = data.split(separator3);
@@ -62,7 +62,7 @@ question.prototype.triLocalisation = function (data) {
 
 question.prototype.triType1 = function (data) {
 	//on définit le séparateur
-	var separator3 = ": ";
+	let separator3 = ": ";
 	//On sépare la question     .split(/,| /)
 	//--> le deuxième membre est le titre
 	data = data.split(separator3);
@@ -75,7 +75,7 @@ question.prototype.triType1 = function (data) {
 
 question.prototype.triType2 = function (data) {
 	//on définit le séparateur
-	var separator3 = "::";
+	let separator3 = "::";
 	//On sépare la question     .split(/,| /)
 	//--> le deuxième membre est le titre
 	data = data.split(separator3);
@@ -88,7 +88,7 @@ question.prototype.triType2 = function (data) {
 
 question.prototype.triInstruction1 = function (data) {
 	//on définit le séparateur
-	var separator3 = "::";
+	let separator3 = "::";
 	//On sépare la question     .split(/,| /)
 	//--> le deuxième membre est le titre
 	data = data.split(separator3);
@@ -101,7 +101,7 @@ question.prototype.triInstruction1 = function (data) {
 
 question.prototype.triInstruction2 = function (data) {
 	//on définit le séparateur
-	var separator3 = "<";
+	let separator3 = "<";
 	//On sépare la question     .split(/,| /)
 	//--> le deuxième membre est le titre
 	data = data.split(separator3);
@@ -114,38 +114,38 @@ question.prototype.triInstruction2 = function (data) {
 
 question.prototype.tri = function (data) {
 	//Avoir le numéro
-	var numero = this.triNum(data);
+	let numero = this.triNum(data);
 	this.num = numero;
 	console.log(this.num);
 
 	//Avoir le titre
-	var titre = this.triTitre1(data);
+	let titre = this.triTitre1(data);
 
-	var titreFinale = this.triTitre2(titre);
+	let titreFinale = this.triTitre2(titre);
 	this.titre = titre;
 
 	//Avoir la localisation
-	var localisation = this.triLocalisation(data);
+	let localisation = this.triLocalisation(data);
 	this.localisation = localisation;
 
 	//Avoir l'instruction
-	var instruction = this.triInstruction1(data);
+	let instruction = this.triInstruction1(data);
 
-	var instructionFinale = this.triInstruction2(instruction);
+	let instructionFinale = this.triInstruction2(instruction);
 	this.instruction = instructionFinale;
 
 	//Avoir le type
-	var type = this.triType1(data);
+	let type = this.triType1(data);
 
-	var typeFinale = this.triType2(type);
+	let typeFinale = this.triType2(type);
 	this.type = instructionFinale;
 
 	if (this.type == "Multiple Choice") {
-		var phrase1 = this.triQuestionMC1(data);
-		var phrase1Intermediaire = this.triQuestionMC2(phrase1);
+		let phrase1 = this.triQuestionMC1(data);
+		let phrase1Intermediaire = this.triQuestionMC2(phrase1);
 		phrase1Intermediaire = phrase1Intermediaire + "<insert answer>";
-		var phrase1PreFinale = this.triQuestionMC3(phrase1Intermediaire);
-		var phrase1Finale = this.triQuestionMC4(phrase1PreFinale);
+		let phrase1PreFinale = this.triQuestionMC3(phrase1Intermediaire);
+		let phrase1Finale = this.triQuestionMC4(phrase1PreFinale);
 
 		console.log(
 			"People are attracted to attempting extreme activities for a <insert answer> of reasons" +

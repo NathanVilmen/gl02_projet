@@ -44,7 +44,7 @@ program
     //pas d'argument
     .action((logger) => {
 
-        var VCard=function(){
+        let VCard=function(){
             this.N;
             this.FN;
             this.typeEmail;
@@ -53,7 +53,7 @@ program
             this.tel;
         }
         //Création de l'objet
-        var card=new VCard();
+        let card=new VCard();
 
         function isNumber(n) {
             return /^-?[\d.]+(?:e-?\d+)?$/.test(n);
@@ -142,10 +142,10 @@ program
 
         const myMap = getDataFromAllFiles();
 
-        var numF=args.numF;
-        var numEnonce=args.numEnonce;
-        var numQ=args.numQ;
-        var nomF=args.nomF;
+        let numF=args.numF;
+        let numEnonce=args.numEnonce;
+        let numQ=args.numQ;
+        let nomF=args.nomF;
 
         console.log("Voici le numero du fichier:"+numF);
         console.log("Voici le numero de l'énoncé':"+numEnonce);
@@ -153,7 +153,7 @@ program
         console.log("Voici le nom du fichier:"+nomF);
 
 
-        var path=myMap.get(numF);
+        let path=myMap.get(numF);
 
         fs.readFile(path, 'utf8', function (err,data) {
             if (err) {
@@ -162,9 +162,9 @@ program
 
             console.log("on lit le fichier");
             //Le path du fichier
-            var pathNewFile=nomF+'.gift';
+            let pathNewFile=nomF+'.gift';
 
-            var analyzer=new VpfParser();
+            let analyzer=new VpfParser();
             analyzer.parse(data);
 
             //on écrit l'énoncé et la question qui lui correspond
@@ -174,7 +174,7 @@ program
                     logger.info("Cette question n'existe pas !");
                 }
                 else{
-                    var data=analyzer.question[numQ];
+                    let data=analyzer.question[numQ];
                     data=data.toString();
                     fs.appendFile(pathNewFile, data, function (err) {
                         if (err) return console.log(err);
@@ -186,8 +186,8 @@ program
                     logger.info("Cette question n'existe pas !");
                 }
                 else{
-                    var data=analyzer.enonce[numEnonce];
-                    var data2=analyzer.question[numEnonce][numQ];
+                    let data=analyzer.enonce[numEnonce];
+                    let data2=analyzer.question[numEnonce][numQ];
                     data=data.toString();
                     data2=data2.toString();
                     fs.appendFile(pathNewFile, data, function (err) {
@@ -219,8 +219,8 @@ program
         console.log('Vous avez choisi ce type d\'exercice : ' + typeExercice);
 
         //Tableau qui contient les caractéristiques de recherche
-        var recherche=new Array();
-        var FichierCorrespondant=new Array();
+        let recherche=new Array();
+        let FichierCorrespondant=new Array();
 
         for (let i = 0; i < 47; i++) {
             let path = myMap.get(i);
@@ -389,16 +389,16 @@ program
     .argument("<file>", "C'est le chemin du fichier à tester")
     .action(({args,logger}) => {
 
-        var path=args.file;
+        let path=args.file;
         fs.readFile(path, 'utf8', function (err,data) {
             if (err) {
                 return logger.warn(err);
             }
             //On parse le fichier pour séparer les questions des énoncés et compter les questions
-            var analyzer=new VpfParser();
+            let analyzer=new VpfParser();
             analyzer.parse(data);
 
-            var count=0;
+            let count=0;
             //On compte le nombre de questions
             for(let i=0;i<analyzer.enonce.length;i++){
                 for(let y=0;y<analyzer.question[i].length;y++){
@@ -661,7 +661,7 @@ program
             }
         }
 
-        var profile = {
+        let profile = {
             "data" : {
                 "values" : [{"Type" : "QCM","Nombre" : nbQCM}, {"Type" : "Vrai-Faux","Nombre" : nbVF}, {"Type" : "Correspondance","Nombre" : nbCORR}, {"Type" : "Mot manquant","Nombre" : nbMM}, {"Type" : "Numérique","Nombre" : nbNUM}, {"Type" : "Ouverte","Nombre" : nbOUV}
                 ]
@@ -679,9 +679,9 @@ program
         const myProfile = vegalite.compile(profile).spec;
 
         /* SVG version */
-        var runtime = vg.parse(myProfile);
-        var view = new vg.View(runtime).renderer('svg').run();
-        var mySvg = view.toSVG();
+        let runtime = vg.parse(myProfile);
+        let view = new vg.View(runtime).renderer('svg').run();
+        let mySvg = view.toSVG();
         mySvg.then(function(res){
             fs.writeFileSync("./Profile.svg", res)
             view.finalize();
@@ -830,9 +830,9 @@ program
         const maComparaison = vegalite.compile(comparaison).spec;
 
         /* SVG version */
-        var runtime = vg.parse(maComparaison);
-        var view = new vg.View(runtime).renderer('svg').run();
-        var mySvg = view.toSVG();
+        let runtime = vg.parse(maComparaison);
+        let view = new vg.View(runtime).renderer('svg').run();
+        let mySvg = view.toSVG();
         mySvg.then(function(res){
             fs.writeFileSync("./ProfilComparaison.svg", res)
             view.finalize();

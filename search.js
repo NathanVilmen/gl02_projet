@@ -1,7 +1,7 @@
 const fs = require('fs');
 const VpfParser = require('./parser.js');
 
-var viewer = function(){
+let viewer = function(){
     this.question=null; //Je sais pas si on peut mettre à null avant
 }
 
@@ -37,7 +37,7 @@ viewer.prototype.viewer = function(data){
 viewer.prototype.rechercher=function (nomExercice) {
 
     //Une fois qu'on a trouvé le fichier on le parse
-    var analyzer = new VpfParser();
+    let analyzer = new VpfParser();
     analyzer.parse(data);   //il faut mettre en argument un fichier
 
     //On définit le séparateur
@@ -57,7 +57,7 @@ viewer.prototype.rechercher=function (nomExercice) {
             //On filtre: on retire tout ce qui est le séparateur
             data=data.filter((val, idx) => !val.match(separator));
 
-            var questionTrouvee = date[nomExercice];
+            let questionTrouvee = date[nomExercice];
             return questionTrouvee;
         }
     }

@@ -1,4 +1,4 @@
-var VpfParser = function () {
+let VpfParser = function () {
 	// The list of POI parsed from the input file.
 	this.question = new Array();
 	this.enonce = new Array();
@@ -9,7 +9,7 @@ var VpfParser = function () {
 VpfParser.prototype.separer = function (data) {
 	//On détecte l'énoncé lorsqu'il n'y a pas d'accolade
 	//Il faut trier le fichier écrit
-	var separator;
+	let separator;
 	if (data.includes("::U")) {
 		separator = "::U";
 	} else if (data.includes("::EM")) {
@@ -31,7 +31,7 @@ VpfParser.prototype.separer = function (data) {
 	let tabEnonce = [];
 
 	//Faut associer toutes les questions à chaque énoncé s'il y en un
-	var marqueur = 0;
+	let marqueur = 0;
 
 	let count = 0;
 	tabQuestions[count] = [];
@@ -84,7 +84,7 @@ VpfParser.prototype.test = function (data) {
 };
 
 VpfParser.prototype.triAffichage = function (data) {
-	var separator;
+	let separator;
 	if (data.includes("::U")) {
 		separator = "::U";
 	} else if (data.includes("::EM")) {
@@ -126,11 +126,11 @@ VpfParser.prototype.triAffichage = function (data) {
 };
 
 VpfParser.prototype.EnonceQuestion = function (data, numero) {
-	var EnonceParsed;
+	let EnonceParsed;
 	EnonceParsed = data[numero];
 
 	//On enlève les éléments parasites
-	var re =
+	let re =
 		/(<i>)|(<\/i>)|(<p>)|(<\/p>)|(<u>)|(<\/u>)|(<b>)|(<\/b>)|(\[html\])|(<br>)|(::)|(\[marked\])|(<\/small>)|(<small>)|(<h4>)|(<\/h4>)|(<\/blockquote>)|(<blockquote>)|(\[markdown\])/gi;
 
 	//Si c'est un énoncé
@@ -424,11 +424,11 @@ VpfParser.prototype.TypeQuestion = function (data, numero) {
 		//Mot manquant--> une seule proposition de réponse {}=xxxx}
 		//Multiple choice--> les autres
 
-		var EnonceParsed;
+		let EnonceParsed;
 		EnonceParsed = data[numero];
 
 		//On cherche ou se situe la première réponses
-		var separator = "{";
+		let separator = "{";
 		EnonceParsed = EnonceParsed.split(separator);
 		data = data.filter((val, idx) => !val.match(separator));
 		EnonceParsed = EnonceParsed[1];

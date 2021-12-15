@@ -86,15 +86,15 @@ program
 		myMap.set(45, "./SujetB_data/U4-p47-Review.gift");
 		myMap.set(46, "./SujetB_data/U5-p50-Use_of_English.gift");
 
-		var numF = args.numF;
-		var nomF = args.nomF;
-		var numQ = args.numQ;
+		let numF = args.numF;
+		let nomF = args.nomF;
+		let numQ = args.numQ;
 
 		console.log("Voici le numero du fichier:" + args.numF);
 		console.log("Voici le nom du fichier:" + args.nomF);
 		console.log("Voici le numero de la question:" + args.numQ);
 
-		var path = myMap.get(numF);
+		let path = myMap.get(numF);
 
 		fs.readFile(path, "utf8", function (err, data) {
 			if (err) {
@@ -120,7 +120,7 @@ program
 
 			//DEBUG
 			console.log("La question a bien été ajoutée " + typeof data);
-			var pathNewFile = nomF + ".gift";
+			let pathNewFile = nomF + ".gift";
 
 			console.log("Voici la question:" + data[numQ]);
 
@@ -231,7 +231,7 @@ program
 		//Puis on l'affiche
 		//On lui dit le numéro du fichier
 
-		//var analyzer = new viewer();
+		//let analyzer = new viewer();
 		//analyzer.rechercher(nomExercice);
 	})
 
@@ -324,7 +324,7 @@ program
 			}
 
 			//Ca marche, https://www.it-swarm-fr.com/fr/javascript/lire-un-fichier-ligne-par-ligne-dans-node.js/972842073/
-			/*var lineReader = require('readline').createInterface({	//On définie une nouvelle constante pour lire
+			/*let lineReader = require('readline').createInterface({	//On définie une nouvelle constante pour lire
 				input: require('fs').createReadStream(path.toString()) //path.toString()});
 			});
 
@@ -519,7 +519,7 @@ program
 
 			console.log("on est dans la command reponse");
 			//On appelle le parser pour qu'il tri le fichier
-			var analyzer = new VpfParser();
+			let analyzer = new VpfParser();
 
 			//On appelle la fonction teste qui trie les réponses de chaque question
 			analyzer.Reponses(data, 1);
@@ -551,16 +551,16 @@ program.run();
             return logger.warn(err);
         }
 
-        var analyzer = new VpfParser();
+        let analyzer = new VpfParser();
         analyzer.parse(data);
   //Maintenant le tableau de questions est dans l'objet VpfParser.parsedPOI
   //Mainteant--> essayer de mettre le numéro de la question dans objet.num
 
   //on créée un objet objet
-  var triQ=new question();
+  let triQ=new question();
 
   //On appelle une fonction dans le fichier parser.js avec en paramètre le parser.parsedPOI
-  var string=analyzer.parsedPOI[0];
+  let string=analyzer.parsedPOI[0];
   triQ.tri(string);
 
     });
