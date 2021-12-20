@@ -80,7 +80,6 @@ program
         fs.appendFile('ListVCard.txt', '*',function (err) {
             if (err) {
                 return console.log(err);
-                console.log('Erreur pour le fichier ListVCard.txt.');
             }
         })
 
@@ -114,7 +113,6 @@ program
                     function (err) {
                         if (err) {
                             return console.log(err);
-                            console.log('Erreur pour le fichier (nom_prenom).vcf');
                         }
                     });
 
