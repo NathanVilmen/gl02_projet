@@ -182,7 +182,6 @@ VpfParser.prototype.Reponses = function (question, numero) {
 							caractereLu.localeCompare("~") !== 0 &&
 							caractereLu.localeCompare("}") !== 0
 						) {
-							//reponse.append(caractereLu);
 							reponse[0] = reponse[0] + caractereLu;
 							//On supprime les \n de la réponse
 							reponse[0] = reponse[0].replace(/\n|\r|\t/g, "");
@@ -217,7 +216,6 @@ VpfParser.prototype.Reponses = function (question, numero) {
 								caractereLu.localeCompare("}") !== 0 &&
 								caractereLu.localeCompare("=") !== 0
 							) {
-								//reponse.append(caractereLu);
 								reponse[i] = reponse[i] + caractereLu;
 
 								//On supprime les \n de la réponse
@@ -260,7 +258,6 @@ VpfParser.prototype.Reponses = function (question, numero) {
 							caractereLu.localeCompare("=") !== 0 &&
 							caractereLu.localeCompare("->") !== 0
 						) {
-							//reponse.append(caractereLu);
 							reponse[i] = reponse[i] + caractereLu;
 
 							//On supprime les \n de la réponse
@@ -468,7 +465,6 @@ VpfParser.prototype.TypeQuestion = function (data, numero) {
 			correspondance = 2;
 		}
 		//S'il contient 'digit..digit'|'digit:digit'|'=digit' c'est un type numérique --> on renvoie 5
-		//else if(EnonceParsed.includes('[0-9]..[0-9]'|'[0-9]:[0-9]'|'=[0-9]')){
 		else {
 			correspondance = 5;
 		}

@@ -7,7 +7,6 @@ const VpfParser = require("./parser_final.js");
 const { program } = require("@caporal/core");
 const { group } = require("console");
 const path = require("path");
-//const { scaleTypePrecedence } = require('vega-lite/build/src/scale');
 
 const vg = require("vega");
 const vegalite = require("vega-lite");
@@ -360,13 +359,10 @@ program
                 compteur=0;
                 for (let k = 0; k < tabLine.length; k++) {
                     if(tabLine[k] === tabLine[j]){
-                        //console.log("compteur" + j + " ++");
                         compteur++;
-                        //console.log("compteur = " + compteur);
                     }
                     if(compteur >= 2){
                         trouve = true;
-                        //console.log("trouve " + j + " " + trouve);
                         tabCompteur = compteur;
                     }
                 }
@@ -464,7 +460,6 @@ program
 
                 //On affiche la ou les questions
                 console.log("-- Informations sur l'exercice --");
-                //console.log("Dans l'exercice il y a " + analyzerResultat.filTest[i][1].length + " questions");
                 console.log("Type de l'exercice :");
                 switch (analyzerResultat.filTest[i][2]) {
                     case 1 :
@@ -515,7 +510,6 @@ program
                     for (let j = 0; j < analyzerResultat.filTest[i][1].length/2; j++) {
                         for (let k = 0; k < (analyzerResultat.filTest[i][1].length/2); k++) {
                             if(analyzerResultat.filTest[i][1][k].localeCompare('') !== 0){
-                                //let aAfficher = analyzerResultat.filTest[i][1][k].replace(">", '')
                                 console.log(analyzerResultat.filTest[i][1][k]);
                             }
                         }
@@ -706,8 +700,6 @@ program
         for(let i=0 ; i < analyzer.filTest.length ; i++){
             tabExamenExtrait[i] = analyzer.filTest[i][2];
         }
-        //test avec une liste toute faite :
-        //let list=[1,2,1,1,1,3,4,5,1];
         
 
         //On initialise le compte des différents types à 0.
@@ -763,10 +755,6 @@ program
 
             let path = prompt("Entrer le chemin du fichier "+(i+1)+" de la banque de question (avec .gift à la fin): ");
             let data = lireFichier(path);
-            //fs.readFile(path, 'utf8', function (err,data) {
-            // if (err) {
-            //     return logger.warn(err);
-            // }
             //appel du parser avec analyzer sur le premier fichier
             let parseur = new VpfParser();
             parseur.test(data);
