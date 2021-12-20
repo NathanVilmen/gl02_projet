@@ -637,9 +637,6 @@ program
             types[i] = analyzer.filTest[i][2];
         }
 
-        //test avec une liste toute faite
-        //let list=[1,2,1,1,1,3,4,5,1]; 
-
         //On initialise le compte des différents types à 0.
         let i = 0;
         let nbQCM = 0;
