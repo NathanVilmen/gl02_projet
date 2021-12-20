@@ -67,4 +67,4 @@ Novembre - Decembre 2021
 
 ## License
 
-Ce projet est sous license GNU General Public License v3.0. [En savoir plus](https://choosealicense.com/licenses/gpl-3.0/)
+Ce projet est sous license [GNU General Public License v3.0](https://git.utt.fr/mirgalem/gl02_projet/-/blob/main/LICENSE). [En savoir plus](https://choosealicense.com/licenses/gpl-3.0/)
