@@ -59,7 +59,7 @@ program
         }
 
         function isString(o) {
-            return typeof o == "string" || (typeof o == "object" && o.constructor === String);
+            return o.length > 0 && typeof o == "string" || (typeof o == "object" && o.constructor === String);
         }
 
 
