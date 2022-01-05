@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fs = require("fs");
 const prompt = require("prompt-sync")();
+const colors = require("colors");
 
 const VpfParser = require("./parser_final.js");
 
@@ -9,7 +10,7 @@ const { group } = require("console");
 const path = require("path");
 
 const vg = require("vega");
-const vegalite = require("vega-lite");
+const vegalite = require("vega-lite"); 
 
 /**
  * Permet de récupérer tous les fichiers du dossier SujetB_data
@@ -63,49 +64,47 @@ program
         }
 
 
-        card.N = prompt("Enter a last name (nom de famille) in lowercases : ");
+        card.N = prompt("Enter a last name (nom de famille) : ").toLowerCase();
 
-        //check d'erreur : si ce n'est pas un string, ou qu'il contient un ou plusieurs chiffres
-        while (!isString(card.N) || card.N.match(/\d+/g) !== null){
-            card.N = prompt("Wrong input. Enter a last name (nom de famille) in lowercases : ");
+        //check d'erreur : si le champ est vide/null, ou qu'il contient un ou plusieurs chiffres
+        while (!card.N || card.N.match(/\d+/g) !== null){
+            card.N = prompt("Wrong input. ".red + "Enter a last name (nom de famille) : ").toLowerCase();
         }
 
-        card.FN = prompt("Enter a first name (prenom) in lowercases : ");
+        card.FN = prompt("Enter a first name (prenom) : ").toLowerCase();
 
-        while (!isString(card.FN) || card.FN.match(/\d+/g) !== null){
-            card.FN = prompt("Wrong input. Enter a first name (prenom) in lowercases : ");
+        while (!card.FN || card.FN.match(/\d+/g) !== null){
+            card.FN = prompt("Wrong input. ".red+"Enter a first name (prenom) : ").toLowerCase();
         }
-
-        //on crée/append un autre fichier, qui contient la liste des noms de tous ceux qui ont
-        fs.appendFile('ListVCard.txt', '*',function (err) {
-            if (err) {
-                return console.log(err);
-                console.log('Erreur pour le fichier ListVCard.txt.');
-            }
-        })
 
         //on check si le fichier existe déjà
         fs.readFile('ListVCard.txt', 'utf8', function (err,data) {
             if (err) {
-                return logger.warn(err);
+                return logger.warn(err.red);
             }
             if (data.includes(card.N+' '+card.FN)) {
-                console.log("Contact déjà existant.\n");
+                console.log("Contact déjà existant.\n".red);
             } else {
+                //on crée/append un autre fichier, qui contient la liste des noms de tous ceux qui ont
+                fs.appendFile('ListVCard.txt', '*',function (err) {
+                    if (err) {
+                        return console.log(err.red);
+                    }
+                })
 
                 //on demande les infos
-                card.typeEmail = prompt("Before entering the email : Is it a HOME mail or a WORK mail(type in uppercases)? ");
+                card.typeEmail = prompt("Before entering the email : Is it a HOME mail or a WORK mail? ").toUpperCase();
                 while (card.typeEmail !== 'HOME' && card.typeEmail !== 'WORK'){
-                    card.typeEmail = prompt("Wrong input. Is it a HOME mail or a WORK mail(type in uppercases)? ");
+                    card.typeEmail = prompt("Wrong input. ".red+"Is it a HOME mail or a WORK mail? ").toUpperCase();
                 }
                 card.email = prompt("Enter the email : ");
-                card.typeTel = prompt("Before entering the phone number : is it HOME, CELL or WORK? (type the word in uppercases) ");
+                card.typeTel = prompt("Before entering the phone number : is it HOME, CELL or WORK? ").toUpperCase();
                 while (card.typeTel !== 'HOME' && card.typeTel !== 'WORK' && card.typeTel !== 'CELL'){
-                    card.typeTel = prompt("Wrong input. Is it a HOME mail or a WORK mail(type in uppercases)? ");
+                    card.typeTel = prompt("Wrong input. ".red+"Is it a HOME phone, CELL phone or a WORK phone? ").toUpperCase();
                 }
-                card.tel = prompt("Enter a phone number (without white spaces) : ");
+                card.tel = prompt("Enter a phone number : ").replace(/\s+/g, '');
                 while (!isNumber(card.tel) || card.tel.length > 10) {
-                    card.tel = prompt("Wrong input. Enter a number with maximum 10 digits : ");
+                    card.tel = prompt("Wrong input. ".red+"Enter a number with maximum 10 digits : ").replace(/\s+/g, '');;
                 }
 
                 //on génère un nouveau fichier vCard
@@ -206,7 +205,7 @@ program
     //Spec3
     .command('viewer', 'Pour rechercher et visualiser une question')
     .action(({logger}) => {
-        
+
         const myMap = getDataFromAllFiles();
 
         //appeler les fonctions du fichier search.js
@@ -247,44 +246,44 @@ program
                     if (err) {
                         return logger.warn(err)
                     }
-    
+
                     //On parse le fichier
                     let analyzer=new VpfParser();
                     analyzer.parse(data);
-    
+
                     //console.log("Voici this.Question "+analyzer.question);
                     console.log("taille enonce"+analyzer.enonce.length);
-                    
+
                     if(analyzer.enonce.length>=2){
-    
+
                         //On a les énoncés associés à toutes les questions
                         //On vérifie quels énoncés contiennent ce mot
                         for(let k=0;k<analyzer.enonce.length;k++){
                             if(analyzer.enonce[k].includes(typeExercice)){
-                                
-                                
+
+
                                 //Il faut penser à afficher les questions sans énoncés avant le premier énoncé qui peuvent contenir ce mot aussi
                                 for(let y=0;y<analyzer.question[0].length;y++){
                                     if(analyzer.question[0].includes(typeExercice)){
                                         console.log("Choississez le numéro de question"+y+" si vous voulez cette question");
                                         console.log(analyzer.question[0][y]);
-    
+
                                         console.log("Cette question correspond");
                                         console.log("Numéro de fichier: "+FichierCorrespondant[i]);
                                         console.log("Numéro d'énoncés: "+0);
                                         console.log("Numéro de question: "+y);
                                     }
                                 }
-                                
+
                                 //On affiche toutes les questions
                                 for(let y=0;y<analyzer.question[k].length;y++){
                                     console.log("Choississez le numéro de question"+y+" si vous voulez cette question");
                                     console.log(analyzer.question[k][y]);
-    
+
                                     console.log("Cette question correspond");
                                     console.log("Numéro de fichier: "+FichierCorrespondant[i]);
                                     console.log("Numéro d'énoncé: "+k);
-                                    console.log("Numéro de questions: "+y);                                 
+                                    console.log("Numéro de questions: "+y);
                                 }
                             }
                             //Si aucun énoncé ne contient ce mot
@@ -292,14 +291,14 @@ program
                             else{
                                 for(let y=0;y<analyzer.question[k].length;y++){
                                     if(analyzer.question[k][y].includes(typeExercice)){
-    
+
                                         console.log(analyzer.question[k][y]);
-    
+
                                         console.log("Cette question correspond");
                                         console.log("Numéro de fichier: "+FichierCorrespondant[i]);
                                         console.log("Numéro d'énoncé: "+k);
-                                        console.log("Numéro de question: "+y); 
-                                    }  
+                                        console.log("Numéro de question: "+y);
+                                    }
                                 }
                             }
                         }
@@ -308,21 +307,21 @@ program
                     else{
                         for(let y=0;y<analyzer.question.length;y++){
                             if(analyzer.question[y].includes(typeExercice)){
-    
+
                                 console.log(analyzer.question[y]);
-    
+
                                 console.log("Cette question correspond");
                                 console.log("Numéro de fichier: "+FichierCorrespondant[i]);
                                 console.log("Numéro d'énoncé: "+(-1));
-                                console.log("Numéro de question: "+y); 
-                            }  
+                                console.log("Numéro de question: "+y);
+                            }
                         }
-                    }  
-                })    
+                    }
+                })
             }
-        
-    
-        }, 1000);     
+
+
+        }, 1000);
     })
 
     /////////############# SPEC 4
@@ -330,7 +329,7 @@ program
     .command("check", 'Vérifier la qualité des données d’examen')
     .argument("<file>", "Nom du fichier à vérifier")
     .action(({args, logger}) => {
-        
+
         let path = args.file;
         console.log("Vous avez choisi de vérifier la qualité des données d'examen du fichier : " + args.file);
         //On recherche s'il y a des questions en double
@@ -341,7 +340,7 @@ program
         let i=1;   //permet de compter le nombre de fois qu'on exécute le while
         fs.readFile(path.toString(), 'utf8', function (err,data) {
             if (err) {
-               return logger.warn(err)
+                return logger.warn(err)
             }
             if(path[14]==="U"){
                 separator = ('::U');
@@ -617,7 +616,7 @@ program
     .action(({args, options, logger}) => {
 
         const data = lireFichier(args.file.toString());
-        
+
         //appel du parser avec analyzer sur le premier fichier
         let analyzer = new VpfParser();
         analyzer.test(data);
@@ -690,7 +689,7 @@ program
         let tabExamenExtrait = Array();
 
         const dataExam = lireFichier(args.file.toString());
-       
+
 
         //appel du parser avec analyzer sur le premier fichier
         let analyzer = new VpfParser();
@@ -700,7 +699,7 @@ program
         for(let i=0 ; i < analyzer.filTest.length ; i++){
             tabExamenExtrait[i] = analyzer.filTest[i][2];
         }
-        
+
 
         //On initialise le compte des différents types à 0.
         let nbQCMExamen = 0;
@@ -823,8 +822,8 @@ program
             view.finalize();
             console.log("Profil sauvegardé dans : ./ProfilComparaison.svg");
         });
-        
-        
+
+
     })
 
     .command("readme", "Affiche le document README.txt")
