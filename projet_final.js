@@ -60,7 +60,7 @@ program
         }
 
         function isString(o) {
-            return typeof o == "string" || (typeof o == "object" && o.constructor === String);
+            return o.length > 0 && typeof o == "string" || (typeof o == "object" && o.constructor === String);
         }
 
 
@@ -113,7 +113,6 @@ program
                     function (err) {
                         if (err) {
                             return console.log(err);
-                            console.log('Erreur pour le fichier (nom_prenom).vcf');
                         }
                     });
 
@@ -153,6 +152,10 @@ program
 
         let path=myMap.get(numF);
 
+        if(path === undefined) {
+            return logger.warn('le numéro de fichier entré est incorrect.');
+        }
+
         fs.readFile(path, 'utf8', function (err,data) {
             if (err) {
                 return logger.warn(err);
@@ -180,8 +183,11 @@ program
                 }
             }
             else{
-                if(analyzer.question[numEnonce][numQ]==null){
-                    logger.info("Cette question n'existe pas !");
+                if(analyzer.question.length <= numEnonce || analyzer.question[numEnonce] == null) {
+                    return logger.warn('le numéro de l\'énoncé du fichier est inexistant.');
+                }
+                if(analyzer.question[numEnonce].length <= numQ || analyzer.question[numEnonce][numQ] == null){
+                    return logger.warn('le numéro de la question saisie est inexistant.');
                 }
                 else{
                     let data=analyzer.enonce[numEnonce];
