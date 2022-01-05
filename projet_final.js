@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 const fs = require("fs");
 const prompt = require("prompt-sync")();
+var mkdirp = require('mkdirp');
+
 
 const VpfParser = require("./parser_final.js");
 
@@ -43,6 +45,11 @@ program
     //pas d'argument
     .action((logger) => {
 
+        let dirname = "./contacts";
+        if (!fs.existsSync(dirname)) {
+            mkdirp(dirname);
+        }
+
         let VCard=function(){
             this.N;
             this.FN;
@@ -76,6 +83,8 @@ program
             card.FN = prompt("Wrong input. Enter a first name (prenom) in lowercases : ");
         }
 
+        
+
         //on crée/append un autre fichier, qui contient la liste des noms de tous ceux qui ont
         fs.appendFile('ListVCard.txt', '*',function (err) {
             if (err) {
@@ -108,8 +117,8 @@ program
                 }
 
                 //on génère un nouveau fichier vCard
-                fs.appendFile(card.N + '_' + card.FN + '.vcf',
-                    'BEGIN:VCARD\nVERSION:4.0\nN:' + card.N + ';' + card.FN + '\nFN:' + card.FN + ' ' + card.N + '\nEMAIL;' + card.typeEmail + ':' + card.email + '\nTEL;' + card.typeTel + ':' + card.tel + '\nEND:VCARD',
+                fs.appendFile(dirname + "/" + card.N + '_' + card.FN + '.vcf',
+                    'BEGIN:VCARD\nVERSION:4.0\nN:' + card.N + ';' + card.FN + '\nFN:' + card.FN + ' ' + card.N + '\nEMAIL;' + card.typeEmail + ':' + card.email + '\nTEL;' + card.typeTel + ':' + card.tel + '\nEND:VCARD', 
                     function (err) {
                         if (err) {
                             return console.log(err);
@@ -150,24 +159,30 @@ program
         console.log("Voici le nom du fichier:"+nomF);
 
 
-        let path=myMap.get(numF);
+        let pathQuestionFile =myMap.get(numF);
 
-        if(path === undefined) {
+
+        let path= "./examens/" + nomF;
+
+        if(pathQuestionFile === undefined) {
             return logger.warn('le numéro de fichier entré est incorrect.');
         }
 
-        fs.readFile(path, 'utf8', function (err,data) {
+        fs.readFile(pathQuestionFile, 'utf8', function (err,data) {
             if (err) {
                 return logger.warn(err);
             }
 
             console.log("on lit le fichier");
             //Le path du fichier
-            let pathNewFile=nomF+'.gift';
 
             let analyzer=new VpfParser();
             analyzer.parse(data);
 
+            let dirname = "./examens";
+            if (!fs.existsSync(dirname)) {
+                mkdirp(dirname);
+            }
             //on écrit l'énoncé et la question qui lui correspond
             //Si l'énoncé est égale à -1--> il n'y a pas d'énoncé à cette question donc on affiche pas l'énoncé
             if(numEnonce===(-1)){
@@ -177,7 +192,7 @@ program
                 else{
                     let data=analyzer.question[numQ];
                     data=data.toString();
-                    fs.appendFile(pathNewFile, data, function (err) {
+                    fs.appendFile(path, data, function (err) {
                         if (err) return console.log(err);
                     });
                 }
@@ -194,10 +209,10 @@ program
                     let data2=analyzer.question[numEnonce][numQ];
                     data=data.toString();
                     data2=data2.toString();
-                    fs.appendFile(pathNewFile, data, function (err) {
+                    fs.appendFile(path, data, function (err) {
                         if (err) return console.log(err);
                     });
-                    fs.appendFile(pathNewFile, data2, function (err) {
+                    fs.appendFile(path, data2, function (err) {
                         if (err) return console.log(err);
                     });
                 }
