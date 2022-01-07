@@ -114,13 +114,16 @@ program
                     card.typeEmail = prompt("Wrong input. ".red+"Is it a HOME mail or a WORK mail? ").toUpperCase();
                 }
                 card.email = prompt("Enter the email : ");
+                while(!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(card.email)){
+                    card.email = prompt("Wrong input. ".red+"Enter a correct email address : ").replace(/\s+/g, '');
+                }
                 card.typeTel = prompt("Before entering the phone number : is it HOME, CELL or WORK? ").toUpperCase();
                 while (card.typeTel !== 'HOME' && card.typeTel !== 'WORK' && card.typeTel !== 'CELL'){
                     card.typeTel = prompt("Wrong input. ".red+"Is it a HOME phone, CELL phone or a WORK phone? ").toUpperCase();
                 }
                 card.tel = prompt("Enter a phone number : ").replace(/\s+/g, '');
-                while (!isNumber(card.tel) || card.tel.length > 10) {
-                    card.tel = prompt("Wrong input. ".red+"Enter a number with maximum 10 digits : ").replace(/\s+/g, '');;
+                while (!/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/.test(card.tel)) {
+                    card.tel = prompt("Wrong input. ".red+"Enter a correct phone number : ").replace(/\s+/g, '');
                 }
 
                 //on génère un nouveau fichier vCard
